@@ -1,0 +1,326 @@
+/* General Body Styles */
+body {
+    font-family: 'Inter', sans-serif; /* Using Inter as requested */
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5; /* Light grey background */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align to top */
+    min-height: 100vh; /* Full viewport height */
+}
+
+.header {
+    background-color: #2196F3; /* A vibrant blue */
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.hamburger-menu {
+    cursor: pointer;
+    margin-right: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 25px;
+    height: 20px;
+}
+
+.hamburger-menu .bar {
+    width: 100%;
+    height: 3px;
+    background-color: white;
+}
+
+.menu-icon {
+    font-size: 28px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.app-title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Main Content Area */
+.main-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Space between sections */
+}
+
+.page-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+/* Card Styling (for input, details, and table sections) */
+.card {
+    margin-left: 20px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px; /* Rounded corners for cards */
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Input Section Styling */
+.input-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns for inputs */
+    gap: 20px; /* Space between grid items */
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group input[type="number"],
+.form-group textarea {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px; /* Rounded input fields */
+    font-size: 16px;
+    width: 100%; /* Full width within its grid column */
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+.form-group textarea {
+    min-height: 80px; /* Min height for remarks textarea */
+    resize: vertical; /* Allow vertical resizing */
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1; /* Spans across all columns */
+}
+
+.button-group {
+    grid-column: 1 / -1; /* Spans across all columns */
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.button-group button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px; /* Rounded buttons */
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.clear-button {
+    background-color: #95a5a6; /* Grey for Clear */
+    color: white;
+}
+
+.clear-button:hover {
+    background-color: #7f8c8d;
+    transform: translateY(-2px);
+}
+
+.add-button {
+    background-color: #3498db; /* Blue for Add */
+    color: white;
+}
+
+.add-button:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+}
+
+/* Purchase Details Section Styling */
+.purchase-details-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.detail-item {
+    flex: 1; /* Distribute space evenly */
+    min-width: 200px; /* Minimum width for each item before wrapping */
+    font-size: 17px;
+    color: #333;
+    font-weight: 500;
+}
+
+.detail-item span {
+    font-weight: normal;
+    color: #666;
+    margin-left: 5px;
+}
+
+.purchase-details-section .button-group {
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.delete-button {
+    background-color: #e74c3c; /* Red for Delete */
+    color: white;
+}
+
+.delete-button:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+}
+
+.confirm-button {
+    background-color: #2ecc71; /* Green for Confirm */
+    color: white;
+}
+
+.confirm-button:hover {
+    background-color: #27ae60;
+    transform: translateY(-2px);
+}
+
+/* Table Section Styling */
+.table-section {
+    overflow-x: auto; /* Enable horizontal scrolling for small screens */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+table th,
+table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+    font-size: 15px;
+}
+
+table th {
+    background-color: #f8f8f8;
+    font-weight: 600;
+    color: #333;
+    text-transform: uppercase;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.no-data {
+    text-align: center;
+    color: #777;
+    padding: 20px;
+    font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .App {
+        margin: 10px;
+        border-radius: 0; /* No border-radius on small screens for full width */
+    }
+
+    .header {
+        padding: 12px 15px;
+    }
+
+    .app-title {
+        font-size: 20px;
+    }
+
+    .main-content {
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .page-title {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    .input-section {
+        grid-template-columns: 1fr; /* Single column layout for inputs on small screens */
+        gap: 15px;
+    }
+
+    .form-group.full-width {
+        grid-column: auto; /* Reset grid-column for full-width on mobile */
+    }
+
+    .button-group {
+        flex-direction: column; /* Stack buttons vertically */
+        align-items: stretch; /* Stretch buttons to full width */
+        gap: 10px;
+    }
+
+    .button-group button {
+        width: 100%;
+    }
+
+    .detail-row {
+        flex-direction: column; /* Stack detail items vertically */
+        gap: 10px;
+    }
+
+    table th,
+    table td {
+        padding: 10px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .menu-icon {
+        font-size: 24px;
+    }
+
+    .app-title {
+        font-size: 18px;
+    }
+
+    .page-title {
+        font-size: 20px;
+    }
+}

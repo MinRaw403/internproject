@@ -1,0 +1,125 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;      /* viewport height 100% */
+    margin: 0;          /* remove default body margin */
+    padding: 0;         /* remove default body padding */
+    box-sizing: border-box;
+    background: #f8f9fa; /* optional background */
+}
+
+.login-container1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;      /* viewport height 100% */
+    margin: 0;          /* remove default body margin */
+    padding: 0;         /* remove default body padding */
+    box-sizing: border-box;
+    /* optional background */
+}
+
+.login-card {
+    width: 350px;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.logo-box {
+    width: 30px;
+    height: 30px;
+    background-color: #1976d2;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.logo-title {
+    margin: 0;
+}
+
+.subtitle {
+    margin: 10px 0 20px 0;
+    color: #444;
+
+}
+
+.input {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #eaeaea;
+    margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.password-wrapper {
+    position: relative;
+    width: 100%;
+
+}
+
+.eye-button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.forgot {
+    font-size: 13px;
+    text-align: right;
+    color: blue;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.note {
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.login-btn {
+    padding: 10px;
+    background-color: #1e90ff;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+.logo-img {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    border-radius: 5px;
+}
+.forgotlink{
+    margin-top: 0px;
+}
+body {
+    display: block;
+    padding-left: 50px;
+}
+label{
+    margin-bottom: 10px;
+}
+
+ .litle{
+     margin-bottom: 30px;
+ }
