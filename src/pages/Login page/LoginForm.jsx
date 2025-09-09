@@ -1,47 +1,55 @@
-import React, { useState } from 'react';
-import './LoginPage.css';
-import logoImage from '../../assets/LOGO.jpg';
-import { Link, useNavigate } from 'react-router-dom';
+"use client"
 
+//src/pages/LoginForm.jsx
+import { useState } from "react"
+import "./LoginPage.css"
+import logoImage from "../../assets/LOGO.jpg"
+import { Link, useNavigate } from "react-router-dom"
 
 function LoginPage() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const navigate = useNavigate();
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [showPassword, setShowPassword] = useState(false)
+    const navigate = useNavigate()
 
     const handleLogin = async (e) => {
-        e.preventDefault();
+        e.preventDefault()
 
         try {
-            const response = await fetch('http://localhost:5000/api/login', {
-                method: 'POST',
+            const response = await fetch("http://localhost:5000/api/login", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ email, password }),
-            });
+            })
 
-            const data = await response.json();
+            const data = await response.json()
 
             if (response.ok && data.success) {
-                alert('Login successful');
-                navigate('/main'); // ✅ redirect to Main Page
+                alert("Login successful");
+
+                if (data.isManager) {
+                    navigate("/create-account"); // Manager
+                } else {
+                    navigate("/main"); // Regular user
+                }
             } else {
-                alert('Invalid email or password');
+                alert("Invalid email or password");
             }
+
         } catch (error) {
-            console.error('Error connecting to server:', error);
-            alert('Error connecting to server');
-            console.error(error);
+            console.error("Error connecting to server:", error)
+            alert("Error connecting to server")
+            console.error(error)
         }
-    };
+    }
 
     return (
         <div className="login-container1">
             <form onSubmit={handleLogin} className="login-card">
                 <div className="logo-container">
-                    <img src={logoImage} alt="SmartStock Logo" className="logo-img" />
+                    <img src={logoImage || "/placeholder.svg"} alt="SmartStock Logo" className="logo-img" />
                     <h2 className="logo-title">SmartStock</h2>
                 </div>
 
@@ -60,33 +68,34 @@ function LoginPage() {
                 <label>Password</label>
                 <div className="password-wrapper">
                     <input
-                        type={showPassword ? 'text' : 'password'}
+                        type={showPassword ? "text" : "password"}
                         placeholder="Enter your password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className="input"
                         required
                     />
-                    <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="eye-button"
-                    />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="eye-button" />
                 </div>
 
                 <p className="forgotlink">
-                    <Link to="/forgot-password" className="forgot">Forgot password</Link>
+                    <Link to="/forgot-password" className="forgot">
+                        Forgot password
+                    </Link>
                 </p>
 
                 <p className="note">
-                    Don’t have an account?<br />
+                    Don’t have an account?
+                    <br />
                     <strong>Contact the manager</strong>
                 </p>
 
-                <button type="submit" className="login-btn">Log in</button>
+                <button type="submit" className="login-btn">
+                    Log in
+                </button>
             </form>
         </div>
-    );
+    )
 }
 
-export default LoginPage;
+export default LoginPage

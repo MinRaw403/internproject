@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import "./GRN.css"
+import { useState, useEffect } from "react";
+import "./GRN.css";
 
 const GRN = () => {
   const [formData, setFormData] = useState({
-    grnNo: "GRN-001",
+    grnNo: "",
     date: new Date().toISOString().split("T")[0],
     supplier: "",
     invoiceNo: "",
@@ -19,44 +19,62 @@ const GRN = () => {
     vat: 0,
     nbt: 0,
     netTotal: 0,
-  })
+  });
+
+  // ✅ fetch auto-generated GRN number from backend
+  useEffect(() => {
+    const fetchGrnNo = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/grns/next-no");
+        const data = await res.json();
+        if (data.success) {
+          setFormData((prev) => ({ ...prev, grnNo: data.grnNo }));
+        } else {
+          setFormData((prev) => ({ ...prev, grnNo: "GRN-001" }));
+        }
+      } catch (err) {
+        console.error("❌ Error fetching GRN No:", err);
+        setFormData((prev) => ({ ...prev, grnNo: "GRN-001" }));
+      }
+    };
+    fetchGrnNo();
+  }, []);
 
   const addItem = () => {
     setFormData((prev) => ({
       ...prev,
       items: [...prev.items, { code: "", item: "", qty: "", unit: "", unitPrice: "", amount: 0 }],
-    }))
-  }
+    }));
+  };
 
   const removeItem = (index) => {
     setFormData((prev) => ({
       ...prev,
       items: prev.items.filter((_, i) => i !== index),
-    }))
-  }
+    }));
+  };
 
   const updateItem = (index, field, value) => {
-    const updatedItems = [...formData.items]
-    updatedItems[index][field] = value
+    const updatedItems = [...formData.items];
+    updatedItems[index][field] = value;
 
-    // Calculate amount for the item
     if (field === "qty" || field === "unitPrice") {
-      const qty = Number.parseFloat(updatedItems[index].qty) || 0
-      const unitPrice = Number.parseFloat(updatedItems[index].unitPrice) || 0
-      updatedItems[index].amount = qty * unitPrice
+      const qty = Number.parseFloat(updatedItems[index].qty) || 0;
+      const unitPrice = Number.parseFloat(updatedItems[index].unitPrice) || 0;
+      updatedItems[index].amount = qty * unitPrice;
     }
 
-    setFormData((prev) => ({ ...prev, items: updatedItems }))
-    calculateTotals(updatedItems)
-  }
+    setFormData((prev) => ({ ...prev, items: updatedItems }));
+    calculateTotals(updatedItems);
+  };
 
   const calculateTotals = (items) => {
-    const total = items.reduce((sum, item) => sum + (item.amount || 0), 0)
-    const discount = formData.discount || 0
-    const balance = total - discount
-    const vat = balance * 0.15 // 15% VAT
-    const nbt = balance * 0.02 // 2% NBT
-    const netTotal = balance + vat + nbt
+    const total = items.reduce((sum, item) => sum + (item.amount || 0), 0);
+    const discount = formData.discount || 0;
+    const balance = total - discount;
+    const vat = balance * 0.15;
+    const nbt = balance * 0.02;
+    const netTotal = balance + vat + nbt;
 
     setFormData((prev) => ({
       ...prev,
@@ -65,39 +83,68 @@ const GRN = () => {
       vat,
       nbt,
       netTotal,
-    }))
-  }
+    }));
+  };
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (field === "discount") {
-      calculateTotals(formData.items)
+      calculateTotals(formData.items);
     }
-  }
+  };
 
-  const handleSave = () => {
-    console.log("Saving GRN:", formData)
-    alert("GRN saved successfully!")
-  }
+  const handleSave = async () => {
+    if (!formData.supplier) {
+      alert("⚠️ Please select a supplier before saving.");
+      return;
+    }
 
-  const handleNew = () => {
-    setFormData({
-      grnNo: `GRN-${String(Math.floor(Math.random() * 1000)).padStart(3, "0")}`,
-      date: new Date().toISOString().split("T")[0],
-      supplier: "",
-      invoiceNo: "",
-      shipmentNo: "",
-      containerNo: "",
-      purchaseType: "local",
-      items: [{ code: "", item: "", qty: "", unit: "", unitPrice: "", amount: 0 }],
-      total: 0,
-      discount: 0,
-      balance: 0,
-      vat: 0,
-      nbt: 0,
-      netTotal: 0,
-    })
-  }
+    try {
+      const response = await fetch("http://localhost:5000/api/grns", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        alert("✅ GRN saved successfully!");
+        console.log("Saved GRN:", data.grn);
+      } else {
+        alert("❌ Failed to save GRN: " + data.message);
+      }
+    } catch (err) {
+      console.error("❌ Save error:", err);
+      alert("Server error while saving GRN: " + err.message);
+    }
+  };
+
+  const handleNew = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/grns/next-no");
+      const data = await res.json();
+
+      setFormData({
+        grnNo: data.success ? data.grnNo : "GRN-001",
+        date: new Date().toISOString().split("T")[0],
+        supplier: "",
+        invoiceNo: "",
+        shipmentNo: "",
+        containerNo: "",
+        purchaseType: "local",
+        items: [{ code: "", item: "", qty: "", unit: "", unitPrice: "", amount: 0 }],
+        total: 0,
+        discount: 0,
+        balance: 0,
+        vat: 0,
+        nbt: 0,
+        netTotal: 0,
+      });
+    } catch (err) {
+      console.error("❌ Error resetting GRN:", err);
+    }
+  };
 
   return (
       <div className="grn-container">
@@ -124,7 +171,7 @@ const GRN = () => {
                 <input
                     type="text"
                     value={formData.grnNo}
-                    onChange={(e) => handleInputChange("grnNo", e.target.value)}
+                    readOnly
                     className="header-input"
                 />
               </div>
@@ -140,11 +187,12 @@ const GRN = () => {
               <h3 className="section-title">Supplier Information</h3>
               <div className="form-grid">
                 <div className="field-group">
-                  <label>Supplier:</label>
+                  <label>Supplier: <span className="required">*</span></label>
                   <select
                       value={formData.supplier}
                       onChange={(e) => handleInputChange("supplier", e.target.value)}
                       className="form-input"
+                      required
                   >
                     <option value="">Select Supplier</option>
                     <option value="supplier1">ABC Trading Co.</option>
@@ -314,7 +362,9 @@ const GRN = () => {
                       type="number"
                       step="0.01"
                       value={formData.discount}
-                      onChange={(e) => handleInputChange("discount", Number.parseFloat(e.target.value) || 0)}
+                      onChange={(e) =>
+                          handleInputChange("discount", Number.parseFloat(e.target.value) || 0)
+                      }
                       className="summary-input"
                   />
                 </div>
@@ -349,7 +399,7 @@ const GRN = () => {
           </button>
         </div>
       </div>
-  )
-}
+  );
+};
 
-export default GRN
+export default GRN;

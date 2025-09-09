@@ -1,57 +1,58 @@
 //server/server.js
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const nodemailer = require('nodemailer');
-const multer = require('multer');
-const path = require('path');
-const User = require('./models/User');
-const Item = require('./models/Item');
-const Supplier = require('./models/Supplier');
-const Category = require('./models/Category');
-const IssueNote = require('./models/IssueNote');
-const PurchaseOrder = require('./models/PurchaseOrder');
 
 
 
+const express = require("express")
+const mongoose = require("mongoose");
+const cors = require("cors")
+const nodemailer = require("nodemailer")
+const multer = require("multer")
+const path = require("path")
+const User = require("./models/User")
+const Item = require("./models/Item")
+const Supplier = require("./models/Supplier")
+const Category = require("./models/Category")
+const IssueNote = require("./models/IssueNote")
+const PurchaseOrder = require("./models/PurchaseOrder")
+const Grn = require("./models/Grn");
 
-const app = express();
+const app = express()
 
-require('dotenv').config();
+require("dotenv").config()
 
-
-app.use(cors());
-app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(cors())
+app.use(express.json())
+app.use("/uploads", express.static(path.join(__dirname, "uploads")))
 
 // ✅ Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/yourDB')
+mongoose
+    .connect("mongodb://localhost:27017/yourDB")
     .then(() => console.log("✅ MongoDB connected"))
-    .catch((err) => console.error("❌ MongoDB connection error:", err));
+    .catch((err) => console.error("❌ MongoDB connection error:", err))
 
 // ✅ In-memory store for OTPs (Temporary - don't use in production)
-const otpStore = {};
+const otpStore = {}
 
 // ✅ Multer config for image uploads
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, 'uploads')); // ✅ Fixed path
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, "uploads")) // ✅ Fixed path
     },
-    filename: function (req, file, cb) {
-        const uniqueName = Date.now() + '-' + file.originalname;
-        cb(null, uniqueName);
-    }
-});
-const upload = multer({ storage });
+    filename: (req, file, cb) => {
+        const uniqueName = Date.now() + "-" + file.originalname
+        cb(null, uniqueName)
+    },
+})
+const upload = multer({ storage })
 
 // ✅ Upload Item API
-app.post('/api/upload-item', upload.single('image'), async (req, res) => {
-    const { category, unitPrice, itemCode, unit, rackNumber, supplier, reOrder, description } = req.body;
+app.post("/api/upload-item", upload.single("image"), async (req, res) => {
+    const { category, unitPrice, itemCode, unit, rackNumber, supplier, reOrder, description } = req.body
 
     // ✅ Debug logs
-    console.log("🟢 Form submitted");
-    console.log("Request body:", req.body);
-    console.log("Uploaded file:", req.file);
+    console.log("🟢 Form submitted")
+    console.log("Request body:", req.body)
+    console.log("Uploaded file:", req.file)
 
     try {
         const newItem = new Item({
@@ -59,141 +60,210 @@ app.post('/api/upload-item', upload.single('image'), async (req, res) => {
             unitPrice,
             itemCode,
             unit,
-            imagePath: req.file ? '/uploads/' + req.file.filename : '',
+            imagePath: req.file ? "/uploads/" + req.file.filename : "",
             rackNumber,
             supplier,
             reOrder,
-            description
-        });
+            description,
+        })
 
-        await newItem.save();
-        res.status(201).json({ success: true, message: 'Item saved successfully', item: newItem });
+        await newItem.save()
+        res.status(201).json({ success: true, message: "Item saved successfully", item: newItem })
     } catch (err) {
-        console.error('❌ Error saving item:', err);
-        res.status(500).json({ success: false, message: 'Server error while saving item' });
+        console.error("❌ Error saving item:", err)
+        res.status(500).json({ success: false, message: "Server error while saving item" })
     }
-});
+})
 
 // ✅ Get All Items API
-app.get('/api/items', async (req, res) => {
+app.get("/api/items", async (req, res) => {
     try {
-        const items = await Item.find();
-        res.json({ success: true, items });
+        const items = await Item.find()
+        res.json({ success: true, items })
     } catch (err) {
-        console.error('Error fetching items:', err);
-        res.status(500).json({ success: false, message: 'Server error' });
+        console.error("Error fetching items:", err)
+        res.status(500).json({ success: false, message: "Server error" })
     }
-});
+})
 
 // ✅ Login route
-app.post('/api/login', async (req, res) => {
+app.post("/api/login", async (req, res) => {
     const { email, password } = req.body;
 
     try {
+        // Manager login
+        if (email === "maneger@gmail.com" && password === "12345678") {
+            return res.json({
+                success: true,
+                isManager: true,
+                message: "Manager login successful",
+            });
+        }
+
+        // Regular user login
         const user = await User.findOne({ email, password });
 
         if (user) {
-            res.json({ success: true });
+            res.json({ success: true, isManager: false });
         } else {
-            res.status(401).json({ success: false, message: 'Invalid credentials' });
+            res.status(401).json({ success: false, message: "Invalid credentials", isManager: false });
         }
     } catch (err) {
-        console.error('Login error:', err);
-        res.status(500).json({ success: false, message: 'Server error' });
+        console.error("Login error:", err);
+        res.status(500).json({ success: false, message: "Server error" });
     }
 });
+
 
 // ✅ Optional: Auto add user (for testing)
-app.post('/api/auto-add-user', async (req, res) => {
-    const { email, password } = req.body;
+app.post("/api/auto-add-user", async (req, res) => {
+    const { email, password } = req.body
 
     try {
-        let user = await User.findOne({ email });
+        let user = await User.findOne({ email })
 
         if (user) {
-            return res.status(200).json({ message: 'User already exists', user });
+            return res.status(200).json({ message: "User already exists", user })
         }
 
-        user = new User({ email, password });
-        await user.save();
+        user = new User({ email, password })
+        await user.save()
 
-        res.status(201).json({ message: 'User created successfully', user });
+        res.status(201).json({ message: "User created successfully", user })
     } catch (error) {
-        console.error('Error adding user:', error);
-        res.status(500).json({ message: 'Server error' });
+        console.error("Error adding user:", error)
+        res.status(500).json({ message: "Server error" })
     }
-});
+})
 
 // ✅ Send OTP
-app.post('/api/send-otp', async (req, res) => {
-    const { email } = req.body;
+app.post("/api/send-otp", async (req, res) => {
+    const { email } = req.body
 
     try {
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email })
 
         if (!user) {
-            return res.status(404).json({ success: false, message: 'Email not found. Please go back and try again.' });
+            return res.status(404).json({ success: false, message: "Email not found. Please go back and try again." })
         }
 
-        const otp = Math.floor(1000 + Math.random() * 9000).toString();
-        otpStore[email] = otp;
+        const otp = Math.floor(1000 + Math.random() * 9000).toString()
+        otpStore[email] = otp
 
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+            service: "gmail",
             auth: {
-                user: 'proximatechnologies34@gmail.com',
-                pass: 'dlmyxbxuaujykidf' // App password (keep secret)
-            }
-        });
+                user: "proximatechnologies34@gmail.com",
+                pass: "dlmyxbxuaujykidf", // App password (keep secret)
+            },
+        })
 
         const mailOptions = {
-            from: 'proximatechnologies34@gmail.com',
+            from: "proximatechnologies34@gmail.com",
             to: email,
-            subject: 'SmartStock OTP Verification',
-            text: `Your OTP code is: ${otp}`
-        };
-
-        await transporter.sendMail(mailOptions);
-        res.json({ success: true, message: 'OTP sent successfully' });
-
-    } catch (error) {
-        console.error('Error sending OTP:', error);
-        res.status(500).json({ success: false, message: 'Failed to send OTP' });
-    }
-});
-
-// ✅ Verify OTP
-app.post('/api/verify-otp', (req, res) => {
-    const { email, otp } = req.body;
-
-    if (otpStore[email] === otp) {
-        delete otpStore[email]; // Clear used OTP
-        res.json({ success: true, message: 'OTP verified' });
-    } else {
-        res.status(400).json({ success: false, message: 'Invalid OTP' });
-    }
-});
-
-// ✅ Reset Password
-app.post('/api/reset-password', async (req, res) => {
-    const { email, newPassword } = req.body;
-
-    try {
-        const user = await User.findOne({ email });
-
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'User not found' });
+            subject: "SmartStock OTP Verification",
+            text: `Your OTP code is: ${otp}`,
         }
 
-        user.password = newPassword;
-        await user.save();
-
-        res.json({ success: true, message: 'Password updated successfully' });
-    } catch (err) {
-        console.error('Error resetting password:', err);
-        res.status(500).json({ success: false, message: 'Server error' });
+        await transporter.sendMail(mailOptions)
+        res.json({ success: true, message: "OTP sent successfully" })
+    } catch (error) {
+        console.error("Error sending OTP:", error)
+        res.status(500).json({ success: false, message: "Failed to send OTP" })
     }
-});
+})
+
+// ✅ Verify OTP
+app.post("/api/verify-otp", (req, res) => {
+    const { email, otp } = req.body
+
+    if (otpStore[email] === otp) {
+        delete otpStore[email] // Clear used OTP
+        res.json({ success: true, message: "OTP verified" })
+    } else {
+        res.status(400).json({ success: false, message: "Invalid OTP" })
+    }
+})
+
+// ✅ Reset Password
+app.post("/api/reset-password", async (req, res) => {
+    const { email, newPassword } = req.body
+
+    try {
+        const user = await User.findOne({ email })
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" })
+        }
+
+        user.password = newPassword
+        await user.save()
+
+        res.json({ success: true, message: "Password updated successfully" })
+    } catch (err) {
+        console.error("Error resetting password:", err)
+        res.status(500).json({ success: false, message: "Server error" })
+    }
+})
+
+// ✅ Added new endpoint for creating user accounts by manager
+app.post("/api/create-account", async (req, res) => {
+    const { firstName, lastName, email, username, role, department, password } = req.body
+
+    console.log("🟢 Create account request received:", req.body)
+
+    try {
+        // Check if user already exists
+        const existingUser = await User.findOne({
+            $or: [{ email }, { username }],
+        })
+
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: "User with this email or username already exists",
+            })
+        }
+
+        // Create new user
+        const newUser = new User({
+            firstName,
+            lastName,
+            email,
+            username,
+            role,
+            department,
+            password, // In production, hash this password
+            createdAt: new Date(),
+        })
+
+        await newUser.save()
+
+        console.log("✅ User created successfully:", newUser._id)
+
+        res.status(201).json({
+            success: true,
+            message: "User account created successfully",
+            user: {
+                id: newUser._id,
+                firstName: newUser.firstName,
+                lastName: newUser.lastName,
+                email: newUser.email,
+                username: newUser.username,
+                role: newUser.role,
+                department: newUser.department,
+            },
+        })
+    } catch (err) {
+        console.error("❌ Error creating user account:", err)
+        res.status(500).json({
+            success: false,
+            message: "Server error while creating account",
+        })
+    }
+})
+
+
 // DELETE /api/items/:itemCode
 app.delete('/api/items/:itemCode', async (req, res) => {
     const { itemCode } = req.params;
@@ -467,6 +537,62 @@ app.get('/api/purchase-orders', async (_req, res) => {
         return res.status(500).json({ success: false, message: err.message });
     }
 });
+
+// Auto-generate GRN No
+const generateGrnNo = async () => {
+    const lastGrn = await Grn.findOne().sort({ createdAt: -1 });
+    if (!lastGrn) return "GRN-001";
+
+    const lastNo = parseInt(lastGrn.grnNo.replace("GRN-", ""), 10);
+    const nextNo = String(lastNo + 1).padStart(3, "0");
+    return `GRN-${nextNo}`;
+};
+
+// Save GRN
+app.post("/api/grns", async (req, res) => {
+    try {
+        if (!req.body.supplier) {
+            return res.status(400).json({ success: false, message: "Supplier is required" });
+        }
+
+        if (!req.body.grnNo) {
+            req.body.grnNo = await generateGrnNo();
+        }
+
+        const newGrn = new Grn(req.body);
+        const savedGrn = await newGrn.save();
+        res.status(201).json({ success: true, grn: savedGrn });
+    } catch (err) {
+        console.error("❌ Error saving GRN:", err.stack);
+        res.status(500).json({ success: false, message: "Server error while saving GRN" });
+    }
+});
+
+// Get all GRNs
+app.get("/api/grns", async (_req, res) => {
+    try {
+        const grns = await Grn.find().sort({ createdAt: -1 });
+        res.json({ success: true, grns });
+    } catch (err) {
+        console.error("❌ Error fetching GRNs:", err.stack);
+        res.status(500).json({ success: false, message: "Server error while fetching GRNs" });
+    }
+});
+
+// Delete GRN
+app.delete("/api/grns/:id", async (req, res) => {
+    try {
+        const deleted = await Grn.findByIdAndDelete(req.params.id);
+        if (!deleted) {
+            return res.status(404).json({ success: false, message: "GRN not found" });
+        }
+        res.json({ success: true, message: "GRN deleted successfully" });
+    } catch (err) {
+        console.error("❌ Error deleting GRN:", err.stack);
+        res.status(500).json({ success: false, message: "Server error while deleting GRN" });
+    }
+});
+
 
 // ✅ Server Start LAST
 app.listen(5000, () => {
