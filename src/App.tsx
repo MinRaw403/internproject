@@ -20,6 +20,7 @@ import Issuenote from "./pages/Issue Note page/Issuenote"
 import PurchaseOrder from "./pages/Purchase Order page/Purchaseorder"
 import GRN from "./pages/GRN/GRN"
 import Account from "./pages/Maneger/CreateAccountForm"
+import Department from "./pages/Department/DepartmentManagement"
 
 function App() {
     return (
@@ -48,6 +49,8 @@ function App() {
                 {/* 💵 Purchase Order Page*/}
                 <Route path="/purchase-order" element={<PurchaseOrder />} />
                 <Route path="/GRN" element={<GRN />} />
+                <Route path="/department" element={<Department />} />
+
             </Routes>
         </Router>
     )

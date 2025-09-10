@@ -15,6 +15,7 @@ const Category = require("./models/Category")
 const IssueNote = require("./models/IssueNote")
 const PurchaseOrder = require("./models/PurchaseOrder")
 const Grn = require("./models/Grn");
+const Department = require("./models/Department");
 
 const app = express()
 
@@ -590,6 +591,52 @@ app.delete("/api/grns/:id", async (req, res) => {
     } catch (err) {
         console.error("❌ Error deleting GRN:", err.stack);
         res.status(500).json({ success: false, message: "Server error while deleting GRN" });
+    }
+});
+
+// ✅ Get all departments
+app.get("/api/departments", async (req, res) => {
+    try {
+        const departments = await Department.find().sort({ createdAt: -1 });
+        res.json({ success: true, departments });
+    } catch (err) {
+        console.error("❌ Error fetching departments:", err.message);
+        res.status(500).json({ success: false, message: "Server error while fetching departments" });
+    }
+});
+
+// ✅ Add new department
+app.post("/api/departments", async (req, res) => {
+    try {
+        const { name, code, description } = req.body;
+
+        // prevent duplicate code
+        const existing = await Department.findOne({ code });
+        if (existing) {
+            return res.status(400).json({ success: false, message: "Department code already exists" });
+        }
+
+        const newDept = new Department({ name, code, description });
+        await newDept.save();
+
+        res.status(201).json({ success: true, department: newDept });
+    } catch (err) {
+        console.error("❌ Error adding department:", err.message);
+        res.status(500).json({ success: false, message: "Server error while adding department" });
+    }
+});
+
+// ✅ Delete department
+app.delete("/api/departments/:id", async (req, res) => {
+    try {
+        const deleted = await Department.findByIdAndDelete(req.params.id);
+        if (!deleted) {
+            return res.status(404).json({ success: false, message: "Department not found" });
+        }
+        res.json({ success: true, message: "Department deleted successfully" });
+    } catch (err) {
+        console.error("❌ Error deleting department:", err.message);
+        res.status(500).json({ success: false, message: "Server error while deleting department" });
     }
 });
 

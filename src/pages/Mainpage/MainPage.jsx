@@ -43,6 +43,8 @@ function MainPage() {
         }
         else if (card.title === 'GRN') {
             linkTo = '/GRN';
+        } else if (card.title === 'Department') {
+            linkTo = '/department';
         }
 
 
