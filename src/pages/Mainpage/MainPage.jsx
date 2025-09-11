@@ -45,6 +45,8 @@ function MainPage() {
             linkTo = '/GRN';
         } else if (card.title === 'Department') {
             linkTo = '/department';
+        } else if (card.title === 'Report') {
+            linkTo = '/report';
         }
 
 

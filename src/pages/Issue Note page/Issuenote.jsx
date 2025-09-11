@@ -531,5 +531,4 @@ function Issuenote() {
         </div>
     )
 }
-
 export default Issuenote

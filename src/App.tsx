@@ -21,6 +21,7 @@ import PurchaseOrder from "./pages/Purchase Order page/Purchaseorder"
 import GRN from "./pages/GRN/GRN"
 import Account from "./pages/Maneger/CreateAccountForm"
 import Department from "./pages/Department/DepartmentManagement"
+import Report from "./pages/Report page/components/StockDashboard"
 
 function App() {
     return (
@@ -50,6 +51,8 @@ function App() {
                 <Route path="/purchase-order" element={<PurchaseOrder />} />
                 <Route path="/GRN" element={<GRN />} />
                 <Route path="/department" element={<Department />} />
+                <Route path="/report" element={<Report />} />
+
 
             </Routes>
         </Router>
