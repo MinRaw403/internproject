@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   BarChart,
   Bar,
@@ -29,121 +29,70 @@ const StockDashboard = () => {
 
   const [activeTab, setActiveTab] = useState("suppliers")
 
-  // Mock data
-  const kpiData = [
-    {
-      title: "Total Items in Stock",
-      value: "2,847",
-      change: "+12%",
-      trend: "up",
-      icon: "📦",
-    },
-    {
-      title: "Total Departments",
-      value: "15",
-      change: "+2",
-      trend: "up",
-      icon: "🏢",
-    },
-    {
-      title: "Purchase Orders",
-      value: "156",
-      change: "+8%",
-      trend: "up",
-      icon: "📄",
-    },
-    {
-      title: "GRNs Received",
-      value: "89",
-      change: "-3%",
-      trend: "down",
-      icon: "⬇️",
-    },
-    {
-      title: "Issue Notes",
-      value: "234",
-      change: "+15%",
-      trend: "up",
-      icon: "⬆️",
-    },
-    {
-      title: "Total Stock Value",
-      value: "$1.2M",
-      change: "+7%",
-      trend: "up",
-      icon: "💰",
-    },
-  ]
+  // ✅ State for live API data
+  const [kpiData, setKpiData] = useState([])
+  const [supplierData, setSupplierData] = useState([])
+  const [itemData, setItemData] = useState([])
+  const [transactionData, setTransactionData] = useState([])
 
-  const supplierData = [
-    { id: 1, name: "ABC Corp", totalPurchases: "$125,000", grns: 45, outstanding: "$12,500", status: "Active" },
-    { id: 2, name: "XYZ Ltd", totalPurchases: "$89,000", grns: 32, outstanding: "$8,900", status: "Active" },
-    { id: 3, name: "Global Supplies", totalPurchases: "$156,000", grns: 67, outstanding: "$15,600", status: "Pending" },
-  ]
+  // ✅ Fetch data on mount
+  useEffect(() => {
+    fetchDashboardData()
+    fetchSuppliers()
+    fetchItems()
+    fetchTransactions()
+  }, [])
 
-  const itemData = [
-    {
-      id: 1,
-      name: "Laptop Dell XPS",
-      category: "Electronics",
-      stock: 25,
-      minStock: 10,
-      maxStock: 50,
-      value: "$25,000",
-      status: "Normal",
-    },
-    {
-      id: 2,
-      name: "Office Chair",
-      category: "Furniture",
-      stock: 8,
-      minStock: 15,
-      maxStock: 30,
-      value: "$4,800",
-      status: "Low Stock",
-    },
-    {
-      id: 3,
-      name: "Printer Paper A4",
-      category: "Office Supplies",
-      stock: 150,
-      minStock: 50,
-      maxStock: 200,
-      value: "$750",
-      status: "Normal",
-    },
-  ]
+  const fetchDashboardData = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/dashboard")
+      const data = await res.json()
+      if (data.success) {
+        setKpiData([
+          { title: "Total Items in Stock", value: data.data.totalItems, change: "+0%", trend: "up", icon: "📦" },
+          { title: "Total Departments", value: data.data.totalDepartments, change: "+0%", trend: "up", icon: "🏢" },
+          { title: "Purchase Orders", value: data.data.purchaseOrders, change: "+0%", trend: "up", icon: "📄" },
+          { title: "GRNs Received", value: data.data.grns, change: "+0%", trend: "up", icon: "⬇️" },
+          { title: "Issue Notes", value: data.data.issueNotes, change: "+0%", trend: "up", icon: "⬆️" },
+          { title: "Total Stock Value", value: `$${data.data.totalStockValue}`, change: "+0%", trend: "up", icon: "💰" },
+        ])
+      }
+    } catch (err) {
+      console.error("Error fetching dashboard data:", err)
+    }
+  }
 
-  const transactionData = [
-    {
-      id: 1,
-      type: "Purchase Order",
-      docNo: "PO-2024-001",
-      date: "2024-01-15",
-      supplier: "ABC Corp",
-      amount: "$15,000",
-      status: "Completed",
-    },
-    {
-      id: 2,
-      type: "GRN",
-      docNo: "GRN-2024-045",
-      date: "2024-01-14",
-      supplier: "XYZ Ltd",
-      amount: "$8,500",
-      status: "Received",
-    },
-    {
-      id: 3,
-      type: "Issue Note",
-      docNo: "ISS-2024-089",
-      date: "2024-01-13",
-      department: "IT Department",
-      amount: "$3,200",
-      status: "Issued",
-    },
-  ]
+  const fetchSuppliers = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/suppliers")
+      const data = await res.json()
+      if (data.success) setSupplierData(data.suppliers)
+    } catch (err) {
+      console.error("Error fetching suppliers:", err)
+    }
+  }
 
+  const fetchItems = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/items")
+      const data = await res.json()
+      if (data.success) setItemData(data.items)
+    } catch (err) {
+      console.error("Error fetching items:", err)
+    }
+  }
+
+  const fetchTransactions = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/transactions")
+      const data = await res.json()
+      if (data.success) setTransactionData(data.transactions)
+    } catch (err) {
+      console.error("Error fetching transactions:", err)
+    }
+  }
+
+  // ✅ Charts can stay static for now
   const purchasesBySupplier = [
     { name: "ABC Corp", value: 125000 },
     { name: "XYZ Ltd", value: 89000 },
@@ -169,20 +118,9 @@ const StockDashboard = () => {
     { month: "Jun", grns: 67, issues: 52 },
   ]
 
-  const handleFilterChange = (key, value) => {
-    setFilters({ ...filters, [key]: value })
-  }
-
-  const resetFilters = () => {
-    setFilters({
-      dateFrom: "",
-      dateTo: "",
-      supplier: "",
-      category: "",
-      documentType: "",
-      search: "",
-    })
-  }
+  const handleFilterChange = (key, value) => setFilters({ ...filters, [key]: value })
+  const resetFilters = () =>
+    setFilters({ dateFrom: "", dateTo: "", supplier: "", category: "", documentType: "", search: "" })
 
   const getStatusBadge = (status) => {
     const variants = {
@@ -197,19 +135,12 @@ const StockDashboard = () => {
     return <span className={`badge ${variants[status] || "badge-default"}`}>{status}</span>
   }
 
-  const handleExportPDF = () => {
-    console.log("Exporting to PDF...")
-  }
-
-  const handleExportExcel = () => {
-    console.log("Exporting to Excel...")
-  }
-
-  const handlePrint = () => {
-    window.print()
-  }
+  const handleExportPDF = () => console.log("Exporting to PDF...")
+  const handleExportExcel = () => console.log("Exporting to Excel...")
+  const handlePrint = () => window.print()
 
   return (
+    <div className="dashboard-container">
       <div className="dashboard-container">
         {/* Header */}
         <header className="dashboard-header">
@@ -386,7 +317,7 @@ const StockDashboard = () => {
                                 <td>{supplier.outstanding}</td>
                                 <td>{getStatusBadge(supplier.status)}</td>
                                 <td>
-                                  <button className="btn btn-ghost btn-sm">👁️</button>
+                                  <button className="btn btn-ghost btn-sm">🗑️</button>
                                 </td>
                               </tr>
                           ))}
@@ -586,6 +517,7 @@ const StockDashboard = () => {
           </div>
         </div>
       </div>
+    </div>
   )
 }
 

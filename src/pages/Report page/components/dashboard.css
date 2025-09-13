@@ -266,12 +266,7 @@
 }
 
 /* Tables */
-.table-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
+
 
 .table-title {
   font-size: 1.125rem;

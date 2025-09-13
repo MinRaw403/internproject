@@ -2,6 +2,7 @@
 
 
 
+
 const express = require("express")
 const mongoose = require("mongoose");
 const cors = require("cors")
@@ -640,6 +641,38 @@ app.delete("/api/departments/:id", async (req, res) => {
     }
 });
 
+// ✅ Dashboard data endpoint
+
+app.get("/api/dashboard", async (req, res) => {
+  try {
+    const totalItems = await Item.countDocuments();
+    const totalDepartments = await Department.countDocuments();
+    const purchaseOrders = await PurchaseOrder.countDocuments();
+    const grns = await Grn.countDocuments();
+    const issueNotes = await IssueNote.countDocuments();
+
+    // Optional: Calculate stock value
+    const items = await Item.find();
+    const totalStockValue = items.reduce((sum, i) => sum + (parseFloat(i.unitPrice) || 0), 0);
+
+    res.json({
+      success: true,
+      data: {
+        totalItems,
+        totalDepartments,
+        purchaseOrders,
+        grns,
+        issueNotes,
+        totalStockValue,
+      }
+    });
+  } catch (err) {
+    console.error("Error fetching dashboard data:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+
 
 // ✅ Server Start LAST
 app.listen(5000, () => {
@@ -647,3 +680,4 @@ app.listen(5000, () => {
 });
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
