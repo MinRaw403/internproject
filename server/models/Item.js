@@ -1,7 +1,6 @@
 //server/models/item.js
 
 const mongoose = require('mongoose');
-const userEvent = require("@testing-library/user-event");
 
 const itemSchema = new mongoose.Schema({
     category: String,

@@ -61,6 +61,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  position: relative;
 }
 
 .field-group label {
@@ -436,5 +437,190 @@
 
   .qty-unit-group {
     flex-direction: column;
+  }
+}
+
+/* Added styles for search dropdown */
+.search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 1000;
+  margin-top: 4px;
+}
+
+.search-dropdown-item {
+  padding: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  transition: background 0.2s ease;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.search-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.search-dropdown-item:hover {
+  background: #f0f9ff;
+}
+
+.item-code {
+  font-weight: 600;
+  color: #2563eb;
+  font-size: 0.875rem;
+  min-width: 70px;
+}
+
+.item-name {
+  flex: 1;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.item-price {
+  font-weight: 600;
+  color: #059669;
+  font-size: 0.875rem;
+}
+
+/* Item dropdown positioning for table cells */
+.item-dropdown {
+  position: fixed;
+  width: 300px;
+}
+
+.required {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+/* Added styles for remarks textarea */
+.remarks-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1f2937;
+  font-size: 0.875rem;
+  font-family: var(--font-sans);
+  resize: vertical;
+  transition: all 0.2s ease;
+  min-height: 100px;
+}
+
+.remarks-textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Added print button styles */
+.print-btn {
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+  background: #3b82f6;
+  color: #ffffff;
+}
+
+.print-btn:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Added print-specific styles */
+@media print {
+  /* Hide interactive elements when printing */
+  .action-buttons,
+  .add-item-btn,
+  .remove-btn,
+  .search-dropdown {
+    display: none !important;
+  }
+
+  /* Hide Action column header and cells */
+  .items-table th:last-child,
+  .items-table td:last-child {
+    display: none !important;
+  }
+
+  /* Optimize page layout for printing */
+  .grn-container {
+    max-width: 100%;
+    padding: 1rem;
+    background: #ffffff;
+  }
+
+  .grn-header {
+    box-shadow: none;
+    border: 1px solid #000;
+    page-break-after: avoid;
+  }
+
+  .form-section {
+    box-shadow: none;
+    border: 1px solid #000;
+    page-break-inside: avoid;
+  }
+
+  /* Make inputs look like plain text when printing */
+  .form-input,
+  .header-input,
+  .table-input,
+  .summary-input,
+  .remarks-textarea {
+    border: none;
+    background: transparent;
+    padding: 0.25rem;
+    font-weight: 500;
+  }
+
+  /* Ensure proper spacing for print */
+  .grn-form {
+    gap: 1rem;
+  }
+
+  /* Make sure tables print properly */
+  .items-table {
+    border: 1px solid #000;
+  }
+
+  .items-table th,
+  .items-table td {
+    border: 1px solid #000;
+    padding: 0.5rem;
+  }
+
+  /* Ensure colors print correctly */
+  .company-name,
+  .section-title {
+    color: #000 !important;
+  }
+
+  .amount-display,
+  .summary-value {
+    color: #000 !important;
+  }
+
+  /* Remove shadows and unnecessary styling */
+  * {
+    box-shadow: none !important;
   }
 }
