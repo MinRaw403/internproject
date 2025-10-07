@@ -547,7 +547,7 @@
 
 /* Added print-specific styles */
 @media print {
-  /* Hide interactive elements when printing */
+  /* Hide all interactive elements */
   .action-buttons,
   .add-item-btn,
   .remove-btn,
@@ -555,72 +555,249 @@
     display: none !important;
   }
 
-  /* Hide Action column header and cells */
+  /* Hide Action column in items table */
   .items-table th:last-child,
   .items-table td:last-child {
     display: none !important;
   }
 
-  /* Optimize page layout for printing */
+  /* Reset container for full-page print */
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
   .grn-container {
     max-width: 100%;
-    padding: 1rem;
+    padding: 20mm;
+    margin: 0;
     background: #ffffff;
   }
 
+  /* Professional header layout */
   .grn-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 2px solid #000;
+    border-radius: 0;
     box-shadow: none;
-    border: 1px solid #000;
     page-break-after: avoid;
   }
 
+  .company-name {
+    font-size: 24pt;
+    color: #000 !important;
+    font-weight: bold;
+  }
+
+  .company-tagline {
+    color: #000 !important;
+    font-size: 10pt;
+  }
+
+  .form-title {
+    font-size: 20pt;
+    color: #000 !important;
+    font-weight: bold;
+  }
+
+  /* Single column layout for print */
+  .grn-form {
+    display: block;
+    margin-bottom: 20px;
+  }
+
+  .left-section,
+  .right-section {
+    display: block;
+    width: 100%;
+  }
+
+  /* Compact supplier info section */
   .form-section {
-    box-shadow: none;
+    margin-bottom: 15px;
+    padding: 10px;
     border: 1px solid #000;
+    border-radius: 0;
+    box-shadow: none;
     page-break-inside: avoid;
   }
 
-  /* Make inputs look like plain text when printing */
+  .section-title {
+    font-size: 12pt;
+    color: #000 !important;
+    border-bottom: 1px solid #000;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+  }
+
+  /* Compact form grid for supplier info */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    font-size: 10pt;
+  }
+
+  .field-group {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .field-group label {
+    font-weight: bold;
+    color: #000;
+    white-space: nowrap;
+    min-width: 100px;
+  }
+
+  /* Make inputs look like printed text */
   .form-input,
   .header-input,
   .table-input,
-  .summary-input,
-  .remarks-textarea {
+  .summary-input {
     border: none;
+    border-bottom: 1px solid #ccc;
     background: transparent;
-    padding: 0.25rem;
-    font-weight: 500;
+    padding: 2px 4px;
+    font-weight: normal;
+    color: #000;
+    font-size: 10pt;
   }
 
-  /* Ensure proper spacing for print */
-  .grn-form {
-    gap: 1rem;
+  /* Radio buttons as text */
+  .radio-group {
+    display: flex;
+    gap: 15px;
   }
 
-  /* Make sure tables print properly */
+  .radio-label {
+    font-size: 10pt;
+    color: #000;
+  }
+
+  .radio-label input[type="radio"] {
+    margin-right: 4px;
+  }
+
+  /* Remarks section */
+  .remarks-textarea {
+    border: 1px solid #ccc;
+    background: transparent;
+    padding: 5px;
+    font-size: 10pt;
+    color: #000;
+    min-height: 60px;
+  }
+
+  /* Items table - full width, professional styling */
+  .items-table-container {
+    margin: 15px 0;
+    border: 2px solid #000;
+    border-radius: 0;
+  }
+
   .items-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .items-table th {
+    background: #f0f0f0 !important;
+    color: #000 !important;
+    padding: 8px 6px;
+    text-align: left;
+    font-weight: bold;
+    font-size: 10pt;
     border: 1px solid #000;
   }
 
-  .items-table th,
   .items-table td {
+    padding: 6px;
     border: 1px solid #000;
-    padding: 0.5rem;
+    font-size: 10pt;
+    color: #000;
   }
 
-  /* Ensure colors print correctly */
-  .company-name,
-  .section-title {
+  .qty-unit-group {
+    display: flex;
+    gap: 4px;
+  }
+
+  .amount-display {
+    font-weight: bold;
     color: #000 !important;
+    text-align: right;
+    display: block;
   }
 
-  .amount-display,
+  /* Financial summary - invoice style */
+  .summary-grid {
+    margin-top: 15px;
+    border: 2px solid #000;
+    padding: 10px;
+    background: #f9f9f9;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 11pt;
+  }
+
+  .summary-row label {
+    font-weight: bold;
+    color: #000;
+  }
+
   .summary-value {
+    font-weight: bold;
+    color: #000 !important;
+    text-align: right;
+    min-width: 120px;
+  }
+
+  .total-row {
+    border-top: 2px solid #000;
+    padding-top: 8px;
+    margin-top: 8px;
+    background: #e0e0e0;
+    padding: 8px 0;
+  }
+
+  .total-row label,
+  .total-row .summary-value {
+    font-size: 13pt;
+    font-weight: bold;
     color: #000 !important;
   }
 
-  /* Remove shadows and unnecessary styling */
+  /* Remove all box shadows and rounded corners */
   * {
     box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  /* Ensure proper page breaks */
+  .grn-header,
+  .form-section,
+  .items-table-container,
+  .summary-grid {
+    page-break-inside: avoid;
+  }
+
+  /* Hide section header with add button */
+  .section-header {
+    display: block;
+  }
+
+  .section-header .section-title {
+    display: block;
   }
 }

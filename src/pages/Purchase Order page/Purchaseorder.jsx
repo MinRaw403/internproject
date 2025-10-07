@@ -173,7 +173,7 @@ export default function PurchaseOrder() {
 
                     {/* Issued Date */}
                     <div className="form-group">
-                        <label className="form-label">Issued Date</label>
+                        <label className="form-label">Date</label>
                         <DatePicker
                             selected={issuedDate}
                             onChange={setIssuedDate}
