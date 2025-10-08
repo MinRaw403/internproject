@@ -540,6 +540,90 @@ app.get('/api/purchase-orders', async (_req, res) => {
     }
 });
 
+// ✅ UPDATE Purchase Order
+app.put('/api/purchase-orders/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedOrder = await PurchaseOrder.findByIdAndUpdate(id, req.body, { new: true });
+
+    if (!updatedOrder) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+    res.json({ success: true, message: 'Order updated successfully', data: updatedOrder });
+  } catch (err) {
+    console.error('❌ Error updating order:', err);
+    res.status(500).json({ success: false, message: 'Could not update the order' });
+  }
+});
+
+
+// DELETE a purchase order by ID
+app.delete('/api/purchase-orders/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const deleted = await PurchaseOrder.findByIdAndDelete(id);
+        if (!deleted) return res.status(404).json({ success: false, message: 'Not found' });
+        res.json({ success: true, message: 'Deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+
+// ✅ PURCHASE ORDER ROUTES
+
+// GET all purchase orders
+app.get('/api/purchase-orders', async (req, res) => {
+    try {
+        const orders = await PurchaseOrder.find().populate('supplier').populate('item');
+        res.json({ success: true, orders });
+    } catch (err) {
+        console.error('❌ Error fetching purchase orders:', err);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// POST create new purchase order
+app.post('/api/purchase-orders', async (req, res) => {
+    try {
+        const newOrder = new PurchaseOrder(req.body);
+        await newOrder.save();
+        res.status(201).json({ success: true, order: newOrder });
+    } catch (err) {
+        console.error('❌ Error saving purchase order:', err);
+        res.status(500).json({ success: false, message: 'Failed to save purchase order' });
+    }
+});
+
+// PUT update purchase order
+app.put('/api/purchase-orders/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const updatedOrder = await PurchaseOrder.findByIdAndUpdate(id, req.body, { new: true });
+        if (!updatedOrder) return res.status(404).json({ success: false, message: 'Order not found' });
+        res.json({ success: true, order: updatedOrder });
+    } catch (err) {
+        console.error('❌ Error updating purchase order:', err);
+        res.status(500).json({ success: false, message: 'Failed to update purchase order' });
+    }
+});
+
+// DELETE purchase order
+app.delete('/api/purchase-orders/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const deletedOrder = await PurchaseOrder.findByIdAndDelete(id);
+        if (!deletedOrder) return res.status(404).json({ success: false, message: 'Order not found' });
+        res.json({ success: true, message: 'Order deleted successfully' });
+    } catch (err) {
+        console.error('❌ Error deleting purchase order:', err);
+        res.status(500).json({ success: false, message: 'Failed to delete purchase order' });
+    }
+});
+
+
+
 // Auto-generate GRN No
 const generateGrnNo = async () => {
     const lastGrn = await Grn.findOne().sort({ createdAt: -1 });

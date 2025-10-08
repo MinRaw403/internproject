@@ -324,3 +324,88 @@ table tbody tr:hover {
         font-size: 20px;
     }
 }
+
+/* Edit Inputs inside Table */
+table tbody tr input[type="number"],
+table tbody tr input[type="text"],
+table tbody tr select {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Action Buttons inside Table */
+table tbody tr button {
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-right: 5px;
+}
+
+table tbody tr .add-button {
+    background-color: #3498db;
+    color: white;
+}
+
+table tbody tr .add-button:hover {
+    background-color: #2980b9;
+}
+
+table tbody tr .delete-button {
+    background-color: #e74c3c;
+    color: white;
+}
+
+table tbody tr .delete-button:hover {
+    background-color: #c0392b;
+}
+
+table tbody tr .confirm-button {
+    background-color: #2ecc71;
+    color: white;
+}
+
+table tbody tr .confirm-button:hover {
+    background-color: #27ae60;
+}
+
+table tbody tr .clear-button {
+    background-color: #95a5a6;
+    color: white;
+}
+
+table tbody tr .clear-button:hover {
+    background-color: #7f8c8d;
+}
+
+/* Preview Section Styling Adjustments */
+.purchase-details-section span {
+    font-weight: 600;
+    color: #000;
+}
+
+/* Table Responsive Fix for Edit Inputs */
+@media (max-width: 768px) {
+    table tbody tr input[type="number"],
+    table tbody tr input[type="text"],
+    table tbody tr select {
+        font-size: 13px;
+    }
+
+    table tbody tr button {
+        font-size: 12px;
+        padding: 5px 10px;
+        margin-bottom: 5px;
+    }
+}
+
+/* Optional: Highlight row being edited */
+table tbody tr.editing-row {
+    background-color: #fff3e0; /* Light orange background */
+}
