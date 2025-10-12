@@ -88,6 +88,26 @@ app.get("/api/items", async (req, res) => {
     }
 })
 
+// GET /api/items/search?q=<query>
+app.get("/api/items/search", async (req, res) => {
+  try {
+    const q = req.query.q || "";
+    const regex = new RegExp(q, "i"); // case-insensitive search
+    const items = await Item.find({
+      $or: [
+        { itemCode: regex },
+        { description: regex },
+        { rackNumber: regex },
+      ],
+    }).limit(20); // limit for scalability
+    res.json({ success: true, items });
+  } catch (err) {
+    console.error("❌ Search error:", err);
+    res.json({ success: false, items: [] });
+  }
+});
+
+
 // ✅ Login route
 app.post("/api/login", async (req, res) => {
     const { email, password } = req.body;
