@@ -1,8 +1,7 @@
-//src/pages/CreateAccountForm.jsx
-"use client"
+"use client";
 
-import { useState } from "react"
-import "./CreateAccountForm.css"
+import { useState } from "react";
+import "./CreateAccountForm.css";
 
 export default function CreateAccountForm() {
     const [formData, setFormData] = useState({
@@ -14,54 +13,56 @@ export default function CreateAccountForm() {
         department: "",
         password: "",
         confirmPassword: "",
-    })
+    });
 
-    const [isSubmitting, setIsSubmitting] = useState(false)
-    const [showSuccess, setShowSuccess] = useState(false)
-    const [errors, setErrors] = useState({})
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [errors, setErrors] = useState({});
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target
+        const { name, value } = e.target;
         setFormData((prev) => ({
             ...prev,
             [name]: value,
-        }))
+        }));
 
-        // Clear error when user starts typing
         if (errors[name]) {
             setErrors((prev) => ({
                 ...prev,
                 [name]: "",
-            }))
+            }));
         }
-    }
+    };
 
     const validateForm = () => {
-        const newErrors = {}
+        const newErrors = {};
 
-        if (!formData.firstName.trim()) newErrors.firstName = "First name is required"
-        if (!formData.lastName.trim()) newErrors.lastName = "Last name is required"
-        if (!formData.email.trim()) newErrors.email = "Email is required"
-        else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email is invalid"
-        if (!formData.username.trim()) newErrors.username = "Username is required"
-        if (!formData.department.trim()) newErrors.department = "Department is required"
-        if (!formData.password) newErrors.password = "Password is required"
-        else if (formData.password.length < 6) newErrors.password = "Password must be at least 6 characters"
-        if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Passwords do not match"
+        if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
+        if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
+        if (!formData.email.trim()) newErrors.email = "Email is required";
+        else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email is invalid";
+        if (!formData.username.trim()) newErrors.username = "Username is required";
+        if (formData.role !== "manager" && !formData.department.trim())
+            newErrors.department = "Department is required";
+        if (!formData.password) newErrors.password = "Password is required";
+        else if (formData.password.length < 6)
+            newErrors.password = "Password must be at least 6 characters";
+        if (formData.password !== formData.confirmPassword)
+            newErrors.confirmPassword = "Passwords do not match";
 
-        return newErrors
-    }
+        return newErrors;
+    };
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
 
-        const newErrors = validateForm()
+        const newErrors = validateForm();
         if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors)
-            return
+            setErrors(newErrors);
+            return;
         }
 
-        setIsSubmitting(true)
+        setIsSubmitting(true);
 
         try {
             const response = await fetch("http://localhost:5000/api/create-account", {
@@ -78,15 +79,14 @@ export default function CreateAccountForm() {
                     department: formData.department,
                     password: formData.password,
                 }),
-            })
+            });
 
-            const result = await response.json()
+            const result = await response.json();
 
             if (result.success) {
-                setShowSuccess(true)
-                console.log("✅ User created successfully:", result.user)
+                setShowSuccess(true);
+                console.log("✅ Account created successfully:", result.user);
 
-                // Reset form after success
                 setTimeout(() => {
                     setFormData({
                         firstName: "",
@@ -97,26 +97,32 @@ export default function CreateAccountForm() {
                         department: "",
                         password: "",
                         confirmPassword: "",
-                    })
-                    setShowSuccess(false)
-                }, 2000)
+                    });
+                    setShowSuccess(false);
+                }, 2000);
             } else {
-                // Handle server errors
-                setErrors({ general: result.message || "Failed to create account" })
+                setErrors({ general: result.message || "Failed to create account" });
             }
         } catch (error) {
-            console.error("❌ Error creating account:", error)
-            setErrors({ general: "Network error. Please check if the server is running." })
+            console.error("❌ Error creating account:", error);
+            setErrors({
+                general: "Network error. Please check if the server is running.",
+            });
         } finally {
-            setIsSubmitting(false)
+            setIsSubmitting(false);
         }
-    }
+    };
 
     return (
         <div className="create-account-container">
             <div className="form-header">
                 <div className="icon-container">
-                    <svg className="user-plus-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <svg
+                        className="user-plus-icon"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                    >
                         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                         <circle cx="9" cy="7" r="4" />
                         <line x1="19" y1="8" x2="19" y2="14" />
@@ -205,8 +211,8 @@ export default function CreateAccountForm() {
                         <label htmlFor="role">Role</label>
                         <select id="role" name="role" value={formData.role} onChange={handleInputChange}>
                             <option value="employee">Employee</option>
-                            <option value="supervisor">Supervisor</option>
                             <option value="admin">Admin</option>
+                            <option value="manager">Manager</option>
                         </select>
                     </div>
                 </div>
@@ -251,11 +257,17 @@ export default function CreateAccountForm() {
                             className={errors.confirmPassword ? "error" : ""}
                             placeholder="Confirm password"
                         />
-                        {errors.confirmPassword && <span className="error-text">{errors.confirmPassword}</span>}
+                        {errors.confirmPassword && (
+                            <span className="error-text">{errors.confirmPassword}</span>
+                        )}
                     </div>
                 </div>
 
-                <button type="submit" className={`submit-btn ${isSubmitting ? "submitting" : ""}`} disabled={isSubmitting}>
+                <button
+                    type="submit"
+                    className={`submit-btn ${isSubmitting ? "submitting" : ""}`}
+                    disabled={isSubmitting}
+                >
                     {isSubmitting ? (
                         <>
                             <div className="spinner"></div>
@@ -267,5 +279,5 @@ export default function CreateAccountForm() {
                 </button>
             </form>
         </div>
-    )
+    );
 }

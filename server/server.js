@@ -1,22 +1,22 @@
 //server/server.js
-
-
-
-
-const express = require("express")
+// internproject/server/server.js
+const express = require("express");
 const mongoose = require("mongoose");
-const cors = require("cors")
-const nodemailer = require("nodemailer")
-const multer = require("multer")
-const path = require("path")
-const User = require("./models/User")
-const Item = require("./models/Item")
-const Supplier = require("./models/Supplier")
-const Category = require("./models/Category")
-const IssueNote = require("./models/IssueNote")
-const PurchaseOrder = require("./models/PurchaseOrder")
+const cors = require("cors");
+const nodemailer = require("nodemailer");
+const multer = require("multer");
+const path = require("path");
+
+// Models
+const User = require("./models/User");
+const Item = require("./models/Item");
+const Supplier = require("./models/Supplier");
+const Category = require("./models/Category");
+const IssueNote = require("./models/IssueNote");
+const PurchaseOrder = require("./models/PurchaseOrder");
 const Grn = require("./models/Grn");
 const Department = require("./models/Department");
+const Maneger = require("./models/Maneger");
 
 const app = express()
 
@@ -108,13 +108,14 @@ app.get("/api/items/search", async (req, res) => {
 });
 
 
-// ✅ Login route
+// ✅ Login route (Managers + Users)
 app.post("/api/login", async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // Manager login
-        if (email === "maneger@gmail.com" && password === "12345678") {
+        // Try manager first
+        const manager = await Maneger.findOne({ email, password });
+        if (manager) {
             return res.json({
                 success: true,
                 isManager: true,
@@ -122,20 +123,70 @@ app.post("/api/login", async (req, res) => {
             });
         }
 
-        // Regular user login
+        // Then regular user
         const user = await User.findOne({ email, password });
-
         if (user) {
-            res.json({ success: true, isManager: false });
-        } else {
-            res.status(401).json({ success: false, message: "Invalid credentials", isManager: false });
+            return res.json({
+                success: true,
+                isManager: false,
+                message: "User login successful",
+            });
         }
+
+        // None matched
+        res.status(401).json({ success: false, message: "Invalid credentials" });
     } catch (err) {
         console.error("Login error:", err);
         res.status(500).json({ success: false, message: "Server error" });
     }
 });
 
+// ✅ Create account (User + Manager)
+app.post("/api/create-account", async (req, res) => {
+    const { firstName, lastName, email, username, role, department, password } = req.body;
+
+    try {
+        // Check if email already exists in either collection
+        const existingUser = await User.findOne({ email });
+        const existingManager = await Maneger.findOne({ email });
+
+        if (existingUser || existingManager) {
+            return res.status(400).json({ success: false, message: "Email already exists" });
+        }
+
+        let createdAccount;
+
+        // ✅ If role is Manager or Admin → Save in Maneger collection
+        if (role === "manager" || role === "admin") {
+            createdAccount = await Maneger.create({
+                firstName,
+                lastName,
+                email,
+                username,
+                role,
+                department,
+                password,
+            });
+        }
+        // ✅ Otherwise → Save in User collection
+        else {
+            createdAccount = await User.create({
+                firstName,
+                lastName,
+                email,
+                username,
+                role,
+                department,
+                password,
+            });
+        }
+
+        res.json({ success: true, user: createdAccount });
+    } catch (error) {
+        console.error("❌ Error creating account:", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+});
 
 // ✅ Optional: Auto add user (for testing)
 app.post("/api/auto-add-user", async (req, res) => {
