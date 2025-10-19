@@ -827,6 +827,103 @@ app.get("/api/dashboard", async (req, res) => {
   }
 });
 
+// ✅ Reports API — Combined data for Report Page
+app.get("/api/transactions", async (req, res) => {
+  try {
+    const purchaseOrders = await PurchaseOrder.find().sort({ createdAt: -1 });
+    const grns = await Grn.find().sort({ createdAt: -1 });
+    const issueNotes = await IssueNote.find().sort({ createdAt: -1 });
+
+    // Normalize data for frontend
+    const transactions = [
+      ...purchaseOrders.map((po) => ({
+        id: po._id,
+        type: "Purchase Order",
+        docNo: po.poNum || "N/A",
+        date: po.issuedDate ? new Date(po.issuedDate).toLocaleDateString() : "N/A",
+        supplier: po.supplier?.name || "Unknown Supplier",
+        amount: po.total || 0,
+        status: "Completed",
+      })),
+      ...grns.map((g) => ({
+        id: g._id,
+        type: "GRN",
+        docNo: g.grnNo || "N/A",
+        date: g.createdAt ? new Date(g.createdAt).toLocaleDateString() : "N/A",
+        supplier: g.supplier?.name || "Unknown Supplier",
+        amount: g.totalAmount || 0,
+        status: "Received",
+      })),
+      ...issueNotes.map((note) => ({
+        id: note._id,
+        type: "Issue Note",
+        docNo: note.code || "N/A",
+        date: note.issuedDate ? new Date(note.issuedDate).toLocaleDateString() : "N/A",
+        department: note.department || "N/A",
+        amount: 0,
+        status: "Issued",
+      })),
+    ];
+
+    res.json({ success: true, transactions });
+  } catch (err) {
+    console.error("❌ Error fetching transaction data:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+// ✅ Supplier Summary API for Reports
+app.get("/api/report-suppliers", async (req, res) => {
+  try {
+    const suppliers = await Supplier.find();
+    const purchaseOrders = await PurchaseOrder.find();
+
+    const summary = suppliers.map((s) => {
+      const supplierOrders = purchaseOrders.filter(
+        (po) => po.supplier?.name === s.name
+      );
+      const totalPurchases = supplierOrders.reduce((sum, po) => sum + (po.total || 0), 0);
+      const grns = supplierOrders.length;
+      const outstanding = totalPurchases * 0.1; // (demo placeholder)
+      return {
+        id: s._id,
+        name: s.name,
+        totalPurchases,
+        grns,
+        outstanding,
+        status: "Active",
+      };
+    });
+
+    res.json({ success: true, suppliers: summary });
+  } catch (err) {
+    console.error("❌ Supplier report error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+// ✅ Item Summary API for Reports
+app.get("/api/report-items", async (req, res) => {
+  try {
+    const items = await Item.find();
+    const summary = items.map((i) => ({
+      id: i._id,
+      name: i.description || i.itemCode,
+      category: i.category || "Uncategorized",
+      stock: i.reOrder || 0,
+      minStock: 10,
+      maxStock: 100,
+      value: i.unitPrice || 0,
+      status: (i.reOrder || 0) < 10 ? "Low Stock" : "Normal",
+    }));
+
+    res.json({ success: true, items: summary });
+  } catch (err) {
+    console.error("❌ Item report error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
 
 
 // ✅ Server Start LAST
