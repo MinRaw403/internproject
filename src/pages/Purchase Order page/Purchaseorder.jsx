@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Purchaseorder.css";
 import axios from "axios";
 import DatePicker from "react-datepicker";
-import "../Issue Note page/custom-datepicker.css";
+import "../IssueNotePage/custom-datepicker.css";
 
 export default function PurchaseOrder() {
   /* ---------------------- state ---------------------- */

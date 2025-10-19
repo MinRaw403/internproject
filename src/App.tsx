@@ -16,12 +16,12 @@ import EditItemForm from "./pages/Items Add pages/EditItemForm"
 import CategoryPage from "./pages/Categories Add pages/category"
 import AddCategoryForm from "./pages/Categories Add pages/add"
 import SuppliersPage from "./pages/SupplierAddpages/SuppliersPage"
-import Issuenote from "./pages/Issue Note page/Issuenote"
 import PurchaseOrder from "./pages/Purchase Order page/Purchaseorder"
 import GRN from "./pages/GRN/GRN"
 import Account from "./pages/Maneger/CreateAccountForm"
 import Department from "./pages/Department/DepartmentManagement"
 import Report from "./pages/Report page/components/StockDashboard"
+import IssueNoteWrapper from "./pages/IssueNotePage/IssueNoteWrapper";
 
 function App() {
     return (
@@ -46,7 +46,7 @@ function App() {
                 {/* 👥 Supplier Management */}
                 <Route path="/suppliers" element={<SuppliersPage />} />
                 {/* 🧾 Issue Note Page */}
-                <Route path="/issue-note" element={<Issuenote />} /> {/* ✅ Added */}
+                <Route path="/issue-note" element={<IssueNoteWrapper />} />
                 {/* 💵 Purchase Order Page*/}
                 <Route path="/purchase-order" element={<PurchaseOrder />} />
                 <Route path="/GRN" element={<GRN />} />

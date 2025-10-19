@@ -29,6 +29,8 @@ function LoginPage() {
             if (response.ok && data.success) {
                 alert("Login successful");
 
+                localStorage.setItem("isManager", data.isManager ? "true" : "false");
+
                 if (data.isManager) {
                     navigate("/create-account"); // Manager
                 } else {

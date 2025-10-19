@@ -164,7 +164,7 @@ function Issuenote() {
         </div>
 
         <div className="page-header">
-          <h1 className="issue-note-title">ISSUE NOTE</h1>
+          <h1 className="issue-note-title">ISSUE NOTE (manegar)</h1>
         </div>
 
         {showSuccessPopup && (
