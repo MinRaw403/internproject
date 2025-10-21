@@ -1,23 +1,36 @@
 /* General Body Styles */
 body {
-    font-family: 'Inter', sans-serif; /* Using Inter as requested */
+    font-family: "Inter", sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f0f2f5; /* Light grey background */
+    background-color: #f0f2f5;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Align to top */
-    min-height: 100vh; /* Full viewport height */
+    align-items: flex-start;
+    min-height: 100vh;
 }
 
 .header {
-    background-color: #2196F3; /* A vibrant blue */
+    background-color: #2196f3;
     color: white;
     padding: 10px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    animation: slideDown 0.4s ease-out;
+}
+
+/* Add slide-down animation for header */
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .header-left {
@@ -33,23 +46,45 @@ body {
     justify-content: space-around;
     width: 25px;
     height: 20px;
+    transition: transform 0.3s ease;
+}
+
+.hamburger-menu:hover {
+    transform: scale(1.1);
 }
 
 .hamburger-menu .bar {
     width: 100%;
     height: 3px;
     background-color: white;
+    transition: all 0.3s ease;
 }
 
 .menu-icon {
     font-size: 28px;
     cursor: pointer;
     padding: 5px;
+    transition: transform 0.3s ease;
+}
+
+.menu-icon:hover {
+    transform: rotate(90deg);
 }
 
 .app-title {
     font-size: 24px;
     font-weight: bold;
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Add fade-in animation for title */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 /* Main Content Area */
@@ -57,7 +92,7 @@ body {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Space between sections */
+    gap: 20px;
 }
 
 .page-title {
@@ -66,23 +101,54 @@ body {
     margin-bottom: 20px;
     font-size: 28px;
     font-weight: 600;
+    animation: slideUp 0.5s ease-out;
 }
 
-/* Card Styling (for input, details, and table sections) */
+/* Add slide-up animation for page title */
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Card Styling */
 .card {
     margin-left: 20px;
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
-    border-radius: 10px; /* Rounded corners for cards */
+    border-radius: 10px;
     padding: 25px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    animation: fadeInScale 0.5s ease-out;
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Add fade-in-scale animation for cards */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 /* Input Section Styling */
 .input-section {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Two columns for inputs */
-    gap: 20px; /* Space between grid items */
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
 }
 
 .form-group {
@@ -99,28 +165,41 @@ body {
 .form-group input[type="text"],
 .form-group input[type="date"],
 .form-group input[type="number"],
-.form-group textarea {
+.form-group textarea,
+.form-group select {
     padding: 12px;
     border: 1px solid #ccc;
-    border-radius: 8px; /* Rounded input fields */
+    border-radius: 8px;
     font-size: 16px;
-    width: 100%; /* Full width within its grid column */
-    box-sizing: border-box; /* Include padding and border in element's total width and height */
+    width: 100%;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="date"]:focus,
+.form-group input[type="number"]:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+    transform: translateY(-2px);
 }
 
 .form-group textarea {
-    min-height: 80px; /* Min height for remarks textarea */
-    resize: vertical; /* Allow vertical resizing */
+    min-height: 80px;
+    resize: vertical;
 }
 
 .form-group.full-width {
-    grid-column: 1 / -1; /* Spans across all columns */
+    grid-column: 1 / -1;
 }
 
 .button-group {
-    grid-column: 1 / -1; /* Spans across all columns */
+    grid-column: 1 / -1;
     display: flex;
-    justify-content: flex-end; /* Align buttons to the right */
+    justify-content: flex-end;
     gap: 15px;
     margin-top: 15px;
 }
@@ -128,31 +207,38 @@ body {
 .button-group button {
     padding: 12px 25px;
     border: none;
-    border-radius: 8px; /* Rounded buttons */
+    border-radius: 8px;
     font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: all 0.3s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.button-group button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.button-group button:active {
+    transform: translateY(-1px);
+}
+
 .clear-button {
-    background-color: #95a5a6; /* Grey for Clear */
+    background-color: #95a5a6;
     color: white;
 }
 
 .clear-button:hover {
     background-color: #7f8c8d;
-    transform: translateY(-2px);
 }
 
 .add-button {
-    background-color: #3498db; /* Blue for Add */
+    background-color: #3498db;
     color: white;
 }
 
 .add-button:hover {
     background-color: #2980b9;
-    transform: translateY(-2px);
 }
 
 /* Purchase Details Section Styling */
@@ -160,18 +246,19 @@ body {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    animation: slideUp 0.5s ease-out;
 }
 
 .detail-row {
     display: flex;
     justify-content: space-between;
     gap: 20px;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    flex-wrap: wrap;
 }
 
 .detail-item {
-    flex: 1; /* Distribute space evenly */
-    min-width: 200px; /* Minimum width for each item before wrapping */
+    flex: 1;
+    min-width: 200px;
     font-size: 17px;
     color: #333;
     font-weight: 500;
@@ -189,28 +276,77 @@ body {
 }
 
 .delete-button {
-    background-color: #e74c3c; /* Red for Delete */
+    background-color: #e74c3c;
     color: white;
 }
 
 .delete-button:hover {
     background-color: #c0392b;
-    transform: translateY(-2px);
 }
 
 .confirm-button {
-    background-color: #2ecc71; /* Green for Confirm */
+    background-color: #2ecc71;
     color: white;
 }
 
 .confirm-button:hover {
     background-color: #27ae60;
-    transform: translateY(-2px);
+}
+
+/* Add search container styling */
+.search-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    position: relative;
+    animation: slideUp 0.4s ease-out;
+}
+
+.search-input {
+    flex: 1;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+}
+
+.search-clear-btn {
+    padding: 8px 12px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #666;
+    transition: all 0.2s ease;
+}
+
+.search-clear-btn:hover {
+    background-color: #e74c3c;
+    color: white;
+    border-color: #e74c3c;
+    transform: scale(1.1);
+}
+
+/* Add record count styling */
+.record-count {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 15px;
+    font-weight: 500;
+    animation: fadeIn 0.4s ease-out;
 }
 
 /* Table Section Styling */
 .table-section {
-    overflow-x: auto; /* Enable horizontal scrolling for small screens */
+    overflow-x: auto;
 }
 
 table {
@@ -234,12 +370,20 @@ table th {
     text-transform: uppercase;
 }
 
+/* Add table row animation and hover effect
+.table-row {
+    animation: fadeIn 5s ease-out;
+    transition: all 0.2s ease;
+}*/
+
 table tbody tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
 table tbody tr:hover {
-    background-color: #f1f1f1;
+    background-color: #e3f2fd;
+    transform: scale(1.01);
+    box-shadow: inset 0 0 10px rgba(33, 150, 243, 0.1);
 }
 
 .no-data {
@@ -247,13 +391,14 @@ table tbody tr:hover {
     color: #777;
     padding: 20px;
     font-style: italic;
+    animation: fadeIn 0.4s ease-out;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
     .App {
         margin: 10px;
-        border-radius: 0; /* No border-radius on small screens for full width */
+        border-radius: 0;
     }
 
     .header {
@@ -275,17 +420,17 @@ table tbody tr:hover {
     }
 
     .input-section {
-        grid-template-columns: 1fr; /* Single column layout for inputs on small screens */
+        grid-template-columns: 1fr;
         gap: 15px;
     }
 
     .form-group.full-width {
-        grid-column: auto; /* Reset grid-column for full-width on mobile */
+        grid-column: auto;
     }
 
     .button-group {
-        flex-direction: column; /* Stack buttons vertically */
-        align-items: stretch; /* Stretch buttons to full width */
+        flex-direction: column;
+        align-items: stretch;
         gap: 10px;
     }
 
@@ -294,8 +439,12 @@ table tbody tr:hover {
     }
 
     .detail-row {
-        flex-direction: column; /* Stack detail items vertically */
+        flex-direction: column;
         gap: 10px;
+    }
+
+    .search-container {
+        flex-direction: column;
     }
 
     table th,
@@ -335,6 +484,15 @@ table tbody tr select {
     font-size: 14px;
     width: 100%;
     box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+table tbody tr input[type="number"]:focus,
+table tbody tr input[type="text"]:focus,
+table tbody tr select:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
 }
 
 /* Action Buttons inside Table */
@@ -355,6 +513,7 @@ table tbody tr .add-button {
 
 table tbody tr .add-button:hover {
     background-color: #2980b9;
+    transform: translateY(-2px);
 }
 
 table tbody tr .delete-button {
@@ -364,6 +523,7 @@ table tbody tr .delete-button {
 
 table tbody tr .delete-button:hover {
     background-color: #c0392b;
+    transform: translateY(-2px);
 }
 
 table tbody tr .confirm-button {
@@ -373,6 +533,7 @@ table tbody tr .confirm-button {
 
 table tbody tr .confirm-button:hover {
     background-color: #27ae60;
+    transform: translateY(-2px);
 }
 
 table tbody tr .clear-button {
@@ -382,6 +543,7 @@ table tbody tr .clear-button {
 
 table tbody tr .clear-button:hover {
     background-color: #7f8c8d;
+    transform: translateY(-2px);
 }
 
 /* Preview Section Styling Adjustments */
@@ -407,5 +569,5 @@ table tbody tr .clear-button:hover {
 
 /* Optional: Highlight row being edited */
 table tbody tr.editing-row {
-    background-color: #fff3e0; /* Light orange background */
+    background-color: #fff3e0;
 }

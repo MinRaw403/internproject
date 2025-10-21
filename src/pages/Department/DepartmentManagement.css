@@ -10,6 +10,8 @@ body {
   background-color: #f3f4f6;
 }
 
+/* ... existing code ... */
+
 /* App Container */
 .app-container {
   min-height: 100vh;
@@ -46,6 +48,12 @@ body {
   align-items: center;
   width: 40px;
   height: 40px;
+  /* <CHANGE> Added transition for smooth hover effect */
+  transition: background-color 0.3s ease;
+}
+
+.menu-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .hamburger-line {
@@ -74,6 +82,19 @@ body {
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  /* <CHANGE> Added smooth animation for card appearance */
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .card-header {
@@ -100,10 +121,18 @@ body {
   border-radius: 0.375rem;
   cursor: pointer;
   font-weight: 500;
+  /* <CHANGE> Added smooth transitions and hover effects */
+  transition: all 0.3s ease;
 }
 
 .add-button:hover {
   background-color: #0284c7;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(14, 165, 233, 0.3);
+}
+
+.add-button:active {
+  transform: translateY(0);
 }
 
 .plus-icon {
@@ -111,8 +140,76 @@ body {
   font-weight: bold;
 }
 
+/* <CHANGE> Added search section styles */
+.search-section {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #f9fafb;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+  background-color: white;
+}
+
+.search-input::placeholder {
+  color: #9ca3af;
+}
+
+.clear-search {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 1.25rem;
+  padding: 0.25rem 0.5rem;
+  transition: all 0.2s ease;
+  border-radius: 0.25rem;
+}
+
+.clear-search:hover {
+  color: #dc2626;
+  background-color: rgba(220, 38, 38, 0.1);
+}
+
 .card-content {
   padding: 1.5rem;
+}
+
+/* <CHANGE> Added no results message styling */
+.no-results {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.no-results p {
+  font-size: 0.95rem;
 }
 
 /* Table */
@@ -126,6 +223,8 @@ body {
   font-weight: 600;
   padding: 0.75rem;
   border-bottom: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  color: #374151;
 }
 
 .department-table td {
@@ -133,8 +232,14 @@ body {
   border-bottom: 1px solid #f3f4f6;
 }
 
+.table-row {
+  /* <CHANGE> Added smooth transition for row hover effect */
+  transition: all 0.2s ease;
+}
+
 .table-row:hover {
-  background-color: #f9fafb;
+  background-color: #f0f9ff;
+  box-shadow: inset 0 0 0 1px #e0f2fe;
 }
 
 .delete-button {
@@ -145,11 +250,18 @@ body {
   border-radius: 0.25rem;
   cursor: pointer;
   font-size: 0.875rem;
+  /* <CHANGE> Added smooth transitions for delete button */
+  transition: all 0.2s ease;
 }
 
 .delete-button:hover {
   background-color: #fef2f2;
   border-color: #fca5a5;
+  transform: scale(1.05);
+}
+
+.delete-button:active {
+  transform: scale(0.95);
 }
 
 /* Modal Styles */
@@ -164,6 +276,8 @@ body {
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  /* <CHANGE> Added fade-in animation for modal overlay */
+  animation: fadeIn 0.2s ease-out;
 }
 
 .modal-content {
@@ -173,6 +287,19 @@ body {
   width: 90%;
   max-height: 90vh;
   overflow-y: auto;
+  /* <CHANGE> Added scale and slide animation for modal content */
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .department-modal .modal-header {
@@ -211,12 +338,19 @@ body {
   border: 1px solid #d1d5db;
   border-radius: 0.375rem;
   font-size: 0.875rem;
+  /* <CHANGE> Added smooth transition for input focus */
+  transition: all 0.2s ease;
 }
 
 .form-group input:focus {
   outline: none;
   border-color: #0ea5e9;
   box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+.form-group input:read-only {
+  background-color: #f3f4f6;
+  cursor: not-allowed;
 }
 
 /* ✅ Fixed spacing for modal buttons */
@@ -235,10 +369,18 @@ body {
   border-radius: 0.375rem;
   cursor: pointer;
   font-weight: 500;
+  /* <CHANGE> Added smooth transitions for button interactions */
+  transition: all 0.2s ease;
 }
 
 .btn-primary:hover {
   background-color: #0284c7;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(14, 165, 233, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
 }
 
 .btn-secondary {
@@ -249,10 +391,17 @@ body {
   border-radius: 0.375rem;
   cursor: pointer;
   font-weight: 500;
+  /* <CHANGE> Added smooth transitions for secondary button */
+  transition: all 0.2s ease;
 }
 
 .btn-secondary:hover {
   background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.btn-secondary:active {
+  background-color: #f3f4f6;
 }
 
 /* Success Modal */
@@ -294,6 +443,20 @@ body {
   justify-content: center;
   font-size: 2rem;
   font-weight: bold;
+  /* <CHANGE> Added bounce animation for success icon */
+  animation: successBounce 0.6s ease-out;
+}
+
+@keyframes successBounce {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .success-buttons {
@@ -310,5 +473,32 @@ body {
   }
   .success-buttons {
     flex-direction: column;
+  }
+
+  .search-section {
+    flex-direction: column;
+  }
+
+  .search-input {
+    width: 100%;
+  }
+
+  .card-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .add-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@keyframes ping {
+  75%,
+  100% {
+    transform: scale(2);
+    opacity: 0;
   }
 }

@@ -3,7 +3,6 @@ import { FaTrash, FaPlus, FaBox, FaTimesCircle } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./category.css";
 import axios from "axios";
-//import Sidebar from "../Sidebar/Sidebar";
 
 export default function CategoryPage() {
   const [categories, setCategories] = useState([]);
@@ -20,15 +19,13 @@ export default function CategoryPage() {
     if (window.history.state && window.history.state.idx === 0) {
       navigate("/main", { replace: true });
     }
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const res = await axios.get("http://localhost:5000/api/categories");
-        if (res.data.success) {
-          setCategories(res.data.categories);
-        }
+        if (res.data.success) setCategories(res.data.categories);
       } catch (error) {
         console.error("Error fetching categories", error);
       }
@@ -37,9 +34,7 @@ export default function CategoryPage() {
     const fetchItems = async () => {
       try {
         const res = await axios.get("http://localhost:5000/api/items");
-        if (res.data.success) {
-          setAllItems(res.data.items);
-        }
+        if (res.data.success) setAllItems(res.data.items);
       } catch (error) {
         console.error("Error fetching items", error);
       }
@@ -52,7 +47,6 @@ export default function CategoryPage() {
   useEffect(() => {
     if (location.state?.categoryAddedData) {
       const newCategory = location.state.categoryAddedData;
-
       setCategories((prev) => {
         if (!prev.some((cat) => cat.code === newCategory.code)) {
           const updated = [...prev, newCategory];
@@ -66,20 +60,22 @@ export default function CategoryPage() {
         setShowSuccessPopup(false);
         window.history.replaceState({}, document.title);
       }, 3000);
-
       return () => clearTimeout(timer);
     }
   }, [location.state]);
 
   const handleRemoveCategory = async () => {
     if (!selectedCategory) return alert("Please select a category to remove.");
-
     if (!window.confirm(`Are you sure you want to delete "${selectedCategory.code}"?`)) return;
 
     try {
-      const res = await axios.delete(`http://localhost:5000/api/categories/${selectedCategory.code}`);
+      const res = await axios.delete(
+          `http://localhost:5000/api/categories/${selectedCategory.code}`
+      );
       if (res.data.success) {
-        setCategories((prev) => prev.filter((cat) => cat.code !== selectedCategory.code));
+        setCategories((prev) =>
+            prev.filter((cat) => cat.code !== selectedCategory.code)
+        );
         setSelectedCategory(null);
         setCategoryItems([]);
         alert("Category deleted successfully");
@@ -105,8 +101,6 @@ export default function CategoryPage() {
 
   return (
       <div className="page-wrapper">
-
-        {/*<Sidebar />*/}
         <div className="category-content">
           <header className="header">
             <div className="header-left">
@@ -118,19 +112,24 @@ export default function CategoryPage() {
               <span className="app-title">SMARTSTOCK(PVT) LTD</span>
             </div>
           </header>
+
           <div className="page-container">
             {showSuccessPopup && (
                 <div className="success-popup">
                   <span className="popup-message">Successfully Added New Category</span>
-                  <button className="popup-close-btn" onClick={() => setShowSuccessPopup(false)}>
+                  <button
+                      className="popup-close-btn"
+                      onClick={() => setShowSuccessPopup(false)}
+                  >
                     <FaTimesCircle />
                   </button>
                 </div>
             )}
 
+            {/* LEFT SECTION */}
             <div className="left-section">
               <img
-                  src={"https://cdn-icons-png.flaticon.com/512/891/891419.png"}
+                  src="https://cdn-icons-png.flaticon.com/512/891/891419.png"
                   alt="Category"
                   className="category-img"
               />
@@ -139,7 +138,9 @@ export default function CategoryPage() {
                   <>
                     <span className="badge-code">{selectedCategory.code}</span>
                     <br />
-                    <span className="badge-description">{selectedCategory.description}</span>
+                    <span className="badge-description">
+                    {selectedCategory.description}
+                  </span>
                   </>
               ) : (
                   "Select Category"
@@ -154,7 +155,10 @@ export default function CategoryPage() {
                 >
                   Remove Category
                 </button>
-                <button className="add-item-btn" onClick={() => navigate("/details")}>
+                <button
+                    className="add-item-btn"
+                    onClick={() => navigate("/details")}
+                >
                   <FaPlus />
                   <span>Add Items</span>
                 </button>
@@ -167,7 +171,9 @@ export default function CategoryPage() {
                           <span>{item.itemCode}</span>
                           <button
                               className="view-item-btn"
-                              onClick={() => navigate(`/item/${item.itemCode}`, { state: { item } })}
+                              onClick={() =>
+                                  navigate(`/item/${item.itemCode}`, { state: { item } })
+                              }
                           >
                             View
                           </button>
@@ -179,6 +185,7 @@ export default function CategoryPage() {
               </div>
             </div>
 
+            {/* RIGHT SECTION */}
             <div className="right-section">
               <h2 className="section-heading">Item Categories</h2>
               <div className="search-bar">
@@ -200,12 +207,15 @@ export default function CategoryPage() {
                             }`}
                             onClick={() => handleCategoryClick(cat)}
                         >
-                          <span>{cat.code} - {cat.description}</span>
+                    <span>
+                      {cat.code} - {cat.description}
+                    </span>
                           <div className="category-box">
                             <FaBox />
                             <span>
                         {
-                          allItems.filter((item) => item.category === cat.code).length
+                          allItems.filter((item) => item.category === cat.code)
+                              .length
                         }
                       </span>
                           </div>
@@ -216,7 +226,10 @@ export default function CategoryPage() {
                 )}
               </div>
 
-              <button className="add-category-btn" onClick={() => navigate("/add")}>
+              <button
+                  className="add-category-btn"
+                  onClick={() => navigate("/add")}
+              >
                 Add Items Category
               </button>
             </div>
