@@ -1,5 +1,6 @@
+/* ===== HEADER ===== */
 .header {
-    background-color: #2196F3; /* A vibrant blue */
+    background-color: #2196f3;
     color: white;
     padding: 10px 20px;
     display: flex;
@@ -29,65 +30,50 @@
     background-color: white;
 }
 
-
-
-
+/* ===== PAGE WRAPPER ===== */
 .page-wrapper {
     display: flex;
     min-height: 100vh;
     overflow: hidden;
 }
 
-.sidebar {
-    width: 220px;
-    background-color: #2c3e50;
-    color: white;
-    height: 100vh;
-    padding: 20px;
-    box-sizing: border-box;
-    position: sticky;
-    top: 0;
-    flex-shrink: 0;
-}
-
+/* ===== CATEGORY CONTENT ===== */
 .category-content {
-    margin-left: 250px; /* Match sidebar width */
     flex: 1;
     overflow-x: hidden;
     overflow-y: auto;
     min-height: 100vh;
+    width: 100%;
 }
 
+/* ===== MAIN PAGE LAYOUT ===== */
 .page-container {
-    display: flex;
-    gap: 20px;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 25px;
     padding: 20px;
-    min-width: 0;
-}
-
-.left-section,
-.right-section {
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin: 25px;
+    width: 100%;
+    flex-wrap: nowrap;
+    box-sizing: border-box;
 }
 
 .left-section {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    width: 35%;
+    min-width: 300px;
 }
 
 .right-section {
     flex: 2;
+    width: 60%;
+    min-width: 400px;
 }
 
+/* ===== LEFT SECTION CONTENT ===== */
 .category-img {
-    width: 30%;
+    width: 40%;
     border-radius: 8px;
     margin-bottom: 20px;
 }
@@ -99,7 +85,8 @@
     border-radius: 5px;
     margin-bottom: 25px;
     text-align: center;
-    width: 300px;
+    width: 80%;
+    display: inline-block;
 }
 
 .left-items {
@@ -124,7 +111,6 @@
     background: #28a745;
     color: white;
 }
-
 .add-item-btn:hover {
     background: #218838;
 }
@@ -133,16 +119,15 @@
     background: #e74c3c;
     color: white;
 }
-
 .remove-category-btn:hover:not(:disabled) {
     background: #c0392b;
 }
-
 .remove-category-btn:disabled {
     background: #ccc;
     cursor: not-allowed;
 }
 
+/* ===== ITEM LIST ===== */
 .item-list {
     display: flex;
     flex-direction: column;
@@ -154,7 +139,7 @@
     background: #fff;
     padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -168,11 +153,11 @@
     border-radius: 6px;
     cursor: pointer;
 }
-
 .view-item-btn:hover {
     background: #2980b9;
 }
 
+/* ===== RIGHT SECTION CONTENT ===== */
 .section-heading {
     text-align: center;
     font-size: 25px;
@@ -194,7 +179,7 @@
 
 .category-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 15px;
 }
 
@@ -206,9 +191,12 @@
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease-in-out;
 }
-
+.category-entry:hover {
+    transform: scale(1.02);
+}
 .category-entry.selected {
     border: 2px solid #007bff;
 }
@@ -222,6 +210,7 @@
     gap: 5px;
 }
 
+/* ===== BUTTON: Add Category ===== */
 .add-category-btn {
     background: #007bff;
     color: white;
@@ -229,6 +218,7 @@
     display: block;
 }
 
+/* ===== SUCCESS POPUP ===== */
 .success-popup {
     position: fixed;
     top: 20px;
@@ -260,20 +250,17 @@
     }
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .page-wrapper {
-        flex-direction: column;
-    }
-
-    .sidebar {
-        width: 100%;
-        position: relative;
-        height: auto;
-    }
-
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 900px) {
     .page-container {
-        flex-direction: column;
+        flex-direction: column !important;
+        gap: 15px;
+    }
+
+    .left-section,
+    .right-section {
+        width: 100% !important;
+        max-width: 100%;
     }
 
     .category-list {

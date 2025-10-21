@@ -1,12 +1,30 @@
+/* Reset and General Styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f6;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Header Styles */
 .header {
-    background-color: #2196F3; /* A vibrant blue */
+    background-color: #2196F3;
     color: white;
     padding: 10px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1000;
 }
 
 .header-left {
@@ -22,30 +40,17 @@
     justify-content: space-around;
     width: 25px;
     height: 20px;
+    background: transparent;
+    border: none;
+    padding: 0;
 }
 
 .hamburger-menu .bar {
     width: 100%;
     height: 3px;
     background-color: white;
+    transition: all 0.3s ease;
 }
-
-/* General Styling */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f7f6;
-    color: #333;
-}
-
-.add-items-page {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-
 
 .app-title {
     font-size: 1.2em;
@@ -53,15 +58,28 @@ body {
 }
 
 .header-right .user-icon {
-    width: 30px; /* Adjust as needed */
-    height: 30px; /* Adjust as needed */
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    background-color: #ddd; /* Placeholder background */
-    display: block; /* To center background easily if image is not loaded */
+    background-color: #ddd;
+    display: block;
+    border: 2px solid white;
 }
 
+/* Main Layout */
+.add-items-page-with-sidebar {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f4f7f6;
+}
 
-/* Main Content */
+.add-items-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+}
+
 .main-content {
     flex-grow: 1;
     padding: 20px;
@@ -70,6 +88,7 @@ body {
     gap: 20px;
     max-width: 1200px;
     margin: 20px auto;
+    width: 100%;
 }
 
 /* Add Items Section */
@@ -94,6 +113,7 @@ body {
     flex-wrap: wrap;
     gap: 20px;
 }
+
 .sr-only {
     position: absolute !important;
     width: 1px;
@@ -101,9 +121,10 @@ body {
     margin: -1px;
     padding: 0;
     overflow: hidden;
-    clip: rect(0,0,0,0);
+    clip: rect(0, 0, 0, 0);
     border: 0;
 }
+
 .form-row {
     display: flex;
     flex-wrap: wrap;
@@ -116,9 +137,10 @@ body {
 }
 
 .form-group {
-    flex: 1 1 calc(50% - 10px); /* Two columns, considering gap */
+    flex: 1 1 calc(50% - 10px);
     display: flex;
     flex-direction: column;
+    min-width: 250px;
 }
 
 .form-group label {
@@ -128,6 +150,8 @@ body {
 }
 
 .form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="file"],
 .form-group select,
 .form-group textarea {
     padding: 10px;
@@ -135,34 +159,45 @@ body {
     border-radius: 4px;
     font-size: 1em;
     width: 100%;
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #2196F3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
 }
 
 .form-group select {
-    appearance: none; /* Remove default arrow */
-    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%204%205%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M2%200L0%202h4L2%200z%20M2%205L0%203h4L2%205z%22%2F%3E%3C%2Fsvg%3E');
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23666" d="M2 0L0 2h4L2 0z M2 5L0 3h4L2 5z"/></svg>');
     background-repeat: no-repeat;
     background-position: right 10px center;
     background-size: 8px 10px;
+    cursor: pointer;
 }
 
 .form-group textarea {
     resize: vertical;
     min-height: 80px;
+    font-family: Arial, sans-serif;
 }
 
 .file-upload-group {
     display: flex;
     align-items: center;
     gap: 10px;
+    width: 100%;
 }
 
-.file-upload-group input {
+.file-upload-group input[type="text"] {
     flex-grow: 1;
 }
 
 .upload-button {
-    background-color: #6c757d; /* Grey button */
+    background-color: #6c757d;
     color: white;
     border: none;
     padding: 10px 15px;
@@ -173,6 +208,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: background-color 0.3s ease;
 }
 
 .upload-button:hover {
@@ -180,7 +216,7 @@ body {
 }
 
 .description-group {
-    flex: 1 1 100%; /* Take full width */
+    flex: 1 1 100%;
 }
 
 .form-actions {
@@ -189,6 +225,7 @@ body {
     justify-content: flex-end;
     gap: 10px;
     margin-top: 20px;
+    flex-wrap: wrap;
 }
 
 .submit-button,
@@ -198,24 +235,28 @@ body {
     border-radius: 4px;
     cursor: pointer;
     font-size: 1em;
+    transition: all 0.3s ease;
+    min-width: 120px;
 }
 
 .submit-button {
-    background-color: #007bff; /* Blue for submit */
+    background-color: #007bff;
     color: white;
 }
 
 .submit-button:hover {
     background-color: #0056b3;
+    transform: translateY(-1px);
 }
 
 .cancel-button {
-    background-color: #dc3545; /* Red for cancel */
+    background-color: #dc3545;
     color: white;
 }
 
 .cancel-button:hover {
     background-color: #c82333;
+    transform: translateY(-1px);
 }
 
 /* Detail View Section */
@@ -236,19 +277,21 @@ body {
 }
 
 .table-container {
-    overflow-x: auto; /* Enable horizontal scrolling for small screens */
+    overflow-x: auto;
+    border-radius: 4px;
+    border: 1px solid #eee;
 }
 
 .detail-view-section table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 700px; /* Ensure table doesn't get too small */
+    min-width: 700px;
 }
 
 .detail-view-section th,
 .detail-view-section td {
     border: 1px solid #ddd;
-    padding: 10px;
+    padding: 12px;
     text-align: left;
 }
 
@@ -256,6 +299,12 @@ body {
     background-color: #f2f2f2;
     font-weight: bold;
     color: #555;
+    position: sticky;
+    top: 0;
+}
+
+.detail-view-section th:last-child {
+    color: #007bff;
 }
 
 .detail-view-section tbody tr:nth-child(even) {
@@ -266,13 +315,43 @@ body {
     background-color: #f1f1f1;
 }
 
+/* Clickable Row Styles */
+.clickable-row {
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.clickable-row:hover {
+    background-color: #e0f2f7;
+}
+
+/* Delete Button Styles */
+.detail-view-section tbody tr td:last-child {
+    text-align: center;
+}
+
+.detail-view-section tbody tr td button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s ease;
+}
+
+.detail-view-section tbody tr td button:hover {
+    background-color: #c82333;
+}
+
 /* Footer */
 .footer {
     background-color: #333;
     color: white;
     padding: 30px 20px;
     font-size: 0.9em;
-    margin-top: 20px;
+    margin-top: auto;
 }
 
 .footer-content {
@@ -287,7 +366,7 @@ body {
 .footer-left,
 .footer-center,
 .footer-right {
-    flex: 1 1 280px; /* Allow items to grow/shrink but maintain a minimum width */
+    flex: 1 1 280px;
     padding: 10px;
 }
 
@@ -297,6 +376,7 @@ body {
     background-color: #555;
     margin-bottom: 15px;
     display: block;
+    border-radius: 4px;
 }
 
 .footer-left p {
@@ -322,15 +402,18 @@ body {
 .footer-center ul li a {
     color: white;
     text-decoration: none;
+    transition: color 0.3s ease;
 }
 
 .footer-center ul li a:hover {
+    color: #2196F3;
     text-decoration: underline;
 }
 
 .newsletter-form {
     display: flex;
     margin-top: 15px;
+    gap: 0;
 }
 
 .newsletter-form input[type="email"] {
@@ -339,6 +422,7 @@ body {
     border: none;
     border-radius: 4px 0 0 4px;
     outline: none;
+    font-size: 0.9em;
 }
 
 .newsletter-form button {
@@ -348,6 +432,8 @@ body {
     padding: 10px 15px;
     border-radius: 0 4px 4px 0;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
 }
 
 .newsletter-form button:hover {
@@ -360,9 +446,21 @@ body {
     padding-top: 20px;
     border-top: 1px solid #444;
     color: #bbb;
+    width: 100%;
 }
 
-/* Responsive Adjustments */
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .add-items-page-with-sidebar {
+        padding: 10px;
+    }
+
+    .main-content {
+        margin: 10px auto;
+        padding: 15px;
+    }
+}
+
 @media (max-width: 768px) {
     .header {
         flex-direction: column;
@@ -370,12 +468,18 @@ body {
         padding: 10px;
     }
 
+    .header-left {
+        width: 100%;
+        justify-content: space-between;
+    }
+
     .header-right {
         margin-top: 10px;
+        align-self: flex-end;
     }
 
     .form-group {
-        flex: 1 1 100%; /* Stack items on small screens */
+        flex: 1 1 100%;
     }
 
     .form-actions {
@@ -393,63 +497,103 @@ body {
         flex-direction: column;
         align-items: center;
         text-align: center;
+        gap: 20px;
     }
 
     .footer-left,
     .footer-center,
     .footer-right {
-        max-width: 90%;
+        max-width: 100%;
+        padding: 0;
     }
 
     .newsletter-form {
         flex-direction: column;
         gap: 10px;
     }
+
     .newsletter-form input[type="email"],
     .newsletter-form button {
         border-radius: 4px;
         width: 100%;
     }
-    /* Add this to AddItemsPage.css */
-    .clickable-row {
-        cursor: pointer;
-        transition: background-color 0.2s ease-in-out;
+
+    .add-items-section,
+    .detail-view-section {
+        padding: 15px;
     }
 
-    .clickable-row:hover {
-        background-color: #e0f2f7; /* Lighter blue on hover to indicate clickability */
+    .detail-view-section table {
+        min-width: 600px;
     }
 }
-/* Update for the Actions column header */
-.detail-view-section th:last-child {
-    color: #007bff; /* Blue color for the Actions header */
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 10px;
+        margin: 5px auto;
+    }
+
+    .add-items-section,
+    .detail-view-section {
+        padding: 15px 10px;
+    }
+
+    .form-row {
+        gap: 15px;
+    }
+
+    .detail-view-section th,
+    .detail-view-section td {
+        padding: 8px;
+        font-size: 0.9em;
+    }
+
+    .footer {
+        padding: 20px 15px;
+    }
+
+    .hamburger-menu {
+        margin-right: 10px;
+    }
+
+    .app-title {
+        font-size: 1.1em;
+    }
 }
 
-/* Style for the Delete button */
-.detail-view-section tbody tr td button {
-    background-color: #dc3545; /* Red color, same as cancel button */
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color 0.2s ease;
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 
-.detail-view-section tbody tr td button:hover {
-    background-color: #c82333; /* Darker red on hover */
-}
-/* Wraps sidebar + main content */
-.add-items-page-with-sidebar {
-    display: flex;
-    min-height: 100vh;
+/* Focus styles for keyboard navigation */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid #2196F3;
+    outline-offset: 2px;
 }
 
-/* Adjust main content to avoid sidebar overlap */
-.add-items-page {
-    margin-left: 220px; /* Same width as sidebar */
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .header {
+        background-color: #000080;
+        border-bottom: 2px solid white;
+    }
+
+    .submit-button {
+        background-color: #000080;
+        border: 2px solid white;
+    }
+
+    .cancel-button {
+        background-color: #8B0000;
+        border: 2px solid white;
+    }
 }
