@@ -1,420 +1,336 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from "react"
-import "./Purchaseorder.css"
-import axios from "axios"
-import DatePicker from "react-datepicker"
+import { useState, useEffect, useRef } from "react";
+import "./Purchaseorder.css";
+import axios from "axios";
+import DatePicker from "react-datepicker";
 
 export default function PurchaseOrder() {
-  /* ---------------------- state ---------------------- */
-  const [supplier, setSupplier] = useState("")
-  const [issuedDate, setIssuedDate] = useState(new Date())
-  const [itemCode, setItemCode] = useState("")
-  const [quantity, setQuantity] = useState("")
-  const [remarks, setRemarks] = useState("")
+  const [supplier, setSupplier] = useState("");
+  const [issuedDate, setIssuedDate] = useState(new Date());
+  const [remarks, setRemarks] = useState("");
 
-  const [suppliersList, setSuppliersList] = useState([])
-  const [itemsList, setItemsList] = useState([])
-  const [unit, setUnit] = useState("")
-  const [unitPrice, setUnitPrice] = useState(0)
-  const [currentEntry, setCurrentEntry] = useState(null)
-  const [tableData, setTableData] = useState([])
+  const [suppliersList, setSuppliersList] = useState([]);
+  const [itemsList, setItemsList] = useState([]);
+  const [poNum, setPoNum] = useState("");
 
-  const [searchTerm, setSearchTerm] = useState("")
+  // New rows table (multi-item)
+  const [rows, setRows] = useState([]);
 
-  const [itemSearchQuery, setItemSearchQuery] = useState("")
-  const [itemSearchResults, setItemSearchResults] = useState([])
-  const [showItemDropdown, setShowItemDropdown] = useState(false)
-  const [selectedItemDisplay, setSelectedItemDisplay] = useState("")
-  const itemSearchRef = useRef(null)
+  // Table of saved POs
+  const [tableData, setTableData] = useState([]);
 
-  // For editing
-  const [editId, setEditId] = useState(null)
-  const [editData, setEditData] = useState({
-    quantity: "",
-    remarks: "",
-    itemCode: "",
-  })
+  // Search / edit
+  const [searchTerm, setSearchTerm] = useState("");
+  const [editId, setEditId] = useState(null);
 
-  /* ------------------- data loading ------------------- */
+  /* ------------------ Load Data ------------------ */
   useEffect(() => {
-    console.log("[v0] Fetching suppliers from backend...")
-    axios
-      .get("http://localhost:5000/api/suppliers")
-      .then((res) => {
-        console.log("[v0] Suppliers response:", res.data)
-        if (res.data.success) {
-          setSuppliersList(res.data.suppliers)
-          console.log("[v0] Suppliers loaded:", res.data.suppliers.length)
-          if (res.data.suppliers.length) {
-            setSupplier(res.data.suppliers[0].code)
-          }
-        } else {
-          console.warn("[v0] Suppliers fetch unsuccessful:", res.data)
-        }
-      })
-      .catch((err) => {
-        console.error("[v0] Error fetching suppliers:", err)
-        console.error("[v0] Error details:", err.response?.data || err.message)
-      })
+    axios.get("http://localhost:5000/api/suppliers").then((res) => {
+      if (res.data.success) setSuppliersList(res.data.suppliers);
+    });
+    axios.get("http://localhost:5000/api/items").then((res) => {
+      if (res.data.success) setItemsList(res.data.items);
+    });
+    axios.get("http://localhost:5000/api/purchase-orders").then((res) => {
+      if (res.data.success) setTableData(res.data.orders);
+    });
 
-    console.log("[v0] Fetching items from backend...")
-    axios
-      .get("http://localhost:5000/api/items")
-      .then((res) => {
-        console.log("[v0] Items response:", res.data)
-        if (res.data.success) {
-          setItemsList(res.data.items)
-          console.log("[v0] Items loaded:", res.data.items.length)
-          if (res.data.items.length) {
-            const first = res.data.items[0]
-            setItemCode(first.itemCode)
-            setUnit(first.unit)
-            setUnitPrice(Number.parseFloat(first.unitPrice || 0))
-            setSelectedItemDisplay(`${first.itemCode} - ${first.description}`)
-          }
-        } else {
-          console.warn("[v0] Items fetch unsuccessful:", res.data)
-        }
-      })
-      .catch((err) => {
-        console.error("[v0] Error fetching items:", err)
-        console.error("[v0] Error details:", err.response?.data || err.message)
-      })
+    generatePoNumber();
+  }, []);
 
-    console.log("[v0] Fetching purchase orders from backend...")
-    axios
-      .get("http://localhost:5000/api/purchase-orders")
-      .then((res) => {
-        console.log("[v0] Purchase orders response:", res.data)
-        if (res.data.success && Array.isArray(res.data.orders)) {
-          setTableData(res.data.orders)
-          console.log("[v0] Purchase orders loaded:", res.data.orders.length)
-        } else {
-          console.warn("[v0] Unexpected response format:", res.data)
-          setTableData([])
-        }
-      })
-      .catch((err) => {
-        console.error("[v0] Error fetching POs:", err)
-        console.error("[v0] Error details:", err.response?.data || err.message)
-        setTableData([])
-      })
-  }, [])
+  const generatePoNumber = () => {
+    const randomNo = Math.floor(Math.random() * 10000)
+      .toString()
+      .padStart(4, "0");
+    setPoNum(`PO-${randomNo}`);
+  };
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (itemSearchRef.current && !itemSearchRef.current.contains(event.target)) {
-        setShowItemDropdown(false)
+  /* ------------------ Row Handling ------------------ */
+  const addRow = () => {
+    setRows([
+      ...rows,
+      {
+        itemCode: "",
+        description: "",
+        unit: "",
+        unitPrice: "",
+        quantity: "",
+        total: 0,
+      },
+    ]);
+  };
+
+  const removeRow = (index) => {
+    setRows(rows.filter((_, i) => i !== index));
+  };
+
+  const handleRowChange = (index, field, value) => {
+    const updated = [...rows];
+    updated[index][field] = value;
+
+    if (field === "itemCode") {
+      const selectedItem = itemsList.find((it) => it.itemCode === value);
+      if (selectedItem) {
+        updated[index].description = selectedItem.description;
+        updated[index].unit = selectedItem.unit;
+        updated[index].unitPrice = selectedItem.unitPrice;
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [])
+    const qty = parseFloat(updated[index].quantity || 0);
+    const price = parseFloat(updated[index].unitPrice || 0);
+    updated[index].total = qty * price;
 
-  useEffect(() => {
-    const delaySearch = setTimeout(() => {
-      if (itemSearchQuery.trim().length > 0) {
-        axios
-          .get(`http://localhost:5000/api/items/search?q=${encodeURIComponent(itemSearchQuery)}`)
-          .then((res) => {
-            if (res.data.success) {
-              setItemSearchResults(res.data.items)
-              setShowItemDropdown(true)
-            }
-          })
-          .catch((err) => console.error("Error searching items:", err))
+    setRows(updated);
+  };
+
+  /* ------------------ Submit / Save PO ------------------ */
+  const handleSubmit = async () => {
+    if (!supplier || rows.length === 0) {
+      alert("Please select a supplier and add at least one item.");
+      return;
+    }
+
+    const total = rows.reduce((sum, r) => sum + r.total, 0);
+    const supplierObj = suppliersList.find((s) => s.code === supplier);
+
+    const poData = {
+      poNum,
+      supplier: supplierObj,
+      issuedDate,
+      items: rows,
+      total,
+      remarks,
+    };
+
+    try {
+      if (editId) {
+        // Editing existing PO
+        const res = await axios.put(
+          `http://localhost:5000/api/purchase-orders/${editId}`,
+          poData
+        );
+        if (res.data.success) {
+          setTableData((prev) =>
+            prev.map((o) => (o._id === editId ? res.data.order : o))
+          );
+          alert("✅ Purchase Order updated successfully!");
+          resetForm();
+        }
       } else {
-        setItemSearchResults([])
-        setShowItemDropdown(false)
+        // New PO
+        const res = await axios.post(
+          "http://localhost:5000/api/purchase-orders",
+          poData
+        );
+        if (res.data.success) {
+          setTableData((prev) => [res.data.order, ...prev]);
+          alert("✅ Purchase Order saved successfully!");
+          resetForm();
+        }
       }
-    }, 300)
-
-    return () => clearTimeout(delaySearch)
-  }, [itemSearchQuery])
-
-  /* ------------------- handlers ------------------- */
-  const handleSupplierChange = (e) => setSupplier(e.target.value)
-
-  const handleItemSelect = (item) => {
-    setItemCode(item.itemCode)
-    setUnit(item.unit)
-    setUnitPrice(Number.parseFloat(item.unitPrice || 0))
-    setSelectedItemDisplay(`${item.itemCode} - ${item.description}`)
-    setItemSearchQuery("")
-    setShowItemDropdown(false)
-  }
-
-  const handleItemSearchChange = (e) => {
-    setItemSearchQuery(e.target.value)
-  }
-
-  const handleItemSearchFocus = () => {
-    if (itemSearchResults.length > 0) {
-      setShowItemDropdown(true)
+    } catch (err) {
+      console.error("❌ Error saving PO:", err);
+      alert("Failed to save Purchase Order");
     }
-  }
+  };
 
-  const handleQuantityChange = (e) => setQuantity(e.target.value)
-  const handleRemarksChange = (e) => setRemarks(e.target.value)
-  const clearEntryInputs = () => {
-    setQuantity("")
-    setRemarks("")
-  }
+  const resetForm = () => {
+    setSupplier("");
+    setIssuedDate(new Date());
+    setRemarks("");
+    setRows([]);
+    setEditId(null);
+    generatePoNumber();
+  };
 
-  const handleSearchChange = (e) => setSearchTerm(e.target.value)
-  const handleClearSearch = () => setSearchTerm("")
+  /* ------------------ Search ------------------ */
+  const handleSearchChange = (e) => setSearchTerm(e.target.value);
+  const handleClearSearch = () => setSearchTerm("");
 
   const filteredTableData = tableData.filter((order) => {
-    const searchLower = searchTerm.toLowerCase()
+    const searchLower = searchTerm.toLowerCase();
     return (
       (order?.poNum || "").toLowerCase().includes(searchLower) ||
-      (order?.item?.itemCode || "").toLowerCase().includes(searchLower) ||
-      (order?.item?.description || "").toLowerCase().includes(searchLower) ||
       (order?.remarks || "").toLowerCase().includes(searchLower)
-    )
-  })
+    );
+  });
 
-  /* -------------------- Preview button -------------------- */
-  const handlePreview = () => {
-    if (!quantity || !itemCode) return
-    const poNum = "PO" + Date.now()
-    const selectedItem = itemsList.find((it) => it.itemCode === itemCode)
-    const supplierObj = suppliersList.find((s) => s.code === supplier) || {}
-
-    const newEntry = {
-      poNum,
-      supplier: { code: supplier, name: supplierObj.name || "" },
-      issuedDate: issuedDate.toISOString(),
-      item: {
-        itemCode: selectedItem?.itemCode || itemCode,
-        description: selectedItem?.description || "",
-        unit,
-        unitPrice,
-      },
-      quantity: Number(quantity),
-      total: Number(quantity) * unitPrice,
-      remarks,
-    }
-    setCurrentEntry(newEntry)
-    clearEntryInputs()
-  }
-
-  /* -------------------- Confirm button -------------------- */
-  const handleConfirm = async () => {
-    if (!currentEntry) return
-    try {
-      const { data } = await axios.post("http://localhost:5000/api/purchase-orders", currentEntry)
-      if (data.success) {
-        setTableData((prev) => [data.order, ...prev])
-        setCurrentEntry(null)
-        alert("Order saved!")
-      } else throw new Error(data.message || "Save failed")
-    } catch (err) {
-      console.error("Save error", err)
-      alert("Could not save order")
-    }
-  }
-
-  /* -------------------- Delete preview -------------------- */
-  const handleDeletePreview = () => setCurrentEntry(null)
-
-  /* -------------------- Delete from table -------------------- */
+  /* ------------------ Delete / Edit ------------------ */
   const handleDeleteOrder = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this order?")) return
+    if (!window.confirm("Delete this order?")) return;
     try {
-      const res = await axios.delete(`http://localhost:5000/api/purchase-orders/${id}`)
+      const res = await axios.delete(
+        `http://localhost:5000/api/purchase-orders/${id}`
+      );
       if (res.data.success) {
-        setTableData((prev) => prev.filter((order) => order._id !== id))
-        alert("Order deleted successfully!")
-      } else alert("Failed to delete order")
+        setTableData((prev) => prev.filter((order) => order._id !== id));
+        alert("Order deleted!");
+      }
     } catch (err) {
-      console.error("Delete error:", err)
-      alert("Failed to delete order")
+      console.error(err);
     }
-  }
+  };
 
-  /* -------------------- Edit order -------------------- */
   const handleEditOrder = (order) => {
-    setEditId(order._id)
-    setEditData({
-      quantity: order.quantity,
-      remarks: order.remarks,
-      itemCode: order.item.itemCode,
-    })
-  }
+    setEditId(order._id);
+    setSupplier(order.supplier?.code || "");
+    setIssuedDate(new Date(order.issuedDate));
+    setRemarks(order.remarks || "");
+    setRows(
+      order.items.map((it) => ({
+        itemCode: it.itemCode,
+        description: it.description,
+        unit: it.unit,
+        unitPrice: it.unitPrice,
+        quantity: it.quantity,
+        total: it.total,
+      }))
+    );
+  };
 
-  const handleEditChange = (field, value) => {
-    setEditData((prev) => ({ ...prev, [field]: value }))
-  }
-
-  const handleSaveEdit = async (id) => {
-    try {
-      const selectedItem = itemsList.find((it) => it.itemCode === editData.itemCode)
-      const updatedOrder = {
-        ...tableData.find((o) => o._id === id),
-        quantity: Number(editData.quantity),
-        remarks: editData.remarks,
-        item: {
-          ...selectedItem,
-          itemCode: selectedItem?.itemCode || editData.itemCode,
-          description: selectedItem?.description || "",
-          unit: selectedItem?.unit || "",
-          unitPrice: Number.parseFloat(selectedItem?.unitPrice || 0),
-        },
-        total: Number(editData.quantity) * Number.parseFloat(selectedItem?.unitPrice || 0),
-      }
-
-      const res = await axios.put(`http://localhost:5000/api/purchase-orders/${id}`, updatedOrder)
-      if (res.data.success) {
-        setTableData((prev) => prev.map((o) => (o._id === id ? res.data.order : o)))
-        setEditId(null)
-        alert("Order updated successfully!")
-      } else {
-        alert("Failed to update order")
-      }
-    } catch (err) {
-      console.error("Update error:", err)
-      alert("Could not update order")
-    }
-  }
-
-  /* ------------------- render ------------------- */
+  /* ------------------ Render ------------------ */
   return (
     <div className="purchase-order-container">
       <div className="main-content">
         <header className="header">
-          <div className="header-left">
-            <div className="hamburger-menu">
-              <div className="bar"></div>
-              <div className="bar"></div>
-              <div className="bar"></div>
-            </div>
-            <span className="app-title">SMARTSTOCK(PVT) LTD</span>
-          </div>
+          <span className="app-title">SMARTSTOCK(PVT) LTD</span>
         </header>
+
         <p className="page-title">Purchase Order</p>
 
         {/* Input Section */}
         <div className="input-section card">
           <div className="form-group">
-            <label htmlFor="supplier">Supplier</label>
-            <select id="supplier" value={supplier} onChange={handleSupplierChange}>
-              {suppliersList.length === 0 ? (
-                <option value="">No suppliers available - Check console for errors</option>
-              ) : (
-                suppliersList.map((s) => <option key={s.code} value={s.code}>{`${s.code} - ${s.name}`}</option>)
-              )}
+            <label>Supplier</label>
+            <select
+              id="supplier"
+              value={supplier}
+              onChange={(e) => setSupplier(e.target.value)}
+            >
+              <option value="">Select Supplier</option>
+              {suppliersList.map((s) => (
+                <option key={s.code} value={s.code}>
+                  {`${s.code} - ${s.name}`}
+                </option>
+              ))}
             </select>
           </div>
 
           <div className="form-group">
-            <label className="form-label">Date</label>
-            <DatePicker selected={issuedDate} onChange={setIssuedDate} className="form-input" dateFormat="yyyy-MM-dd" />
+            <label>Date</label>
+            <DatePicker
+              selected={issuedDate}
+              onChange={setIssuedDate}
+              className="form-input"
+              dateFormat="yyyy-MM-dd"
+            />
           </div>
 
-          <div className="form-group" ref={itemSearchRef}>
-            <label htmlFor="item">Item (Search by Code, Description, or Rack Number)</label>
-            <div className="item-search-container">
-              <input
-                type="text"
-                id="item-search"
-                className="item-search-input"
-                placeholder="Type to search items..."
-                value={itemSearchQuery || selectedItemDisplay}
-                onChange={handleItemSearchChange}
-                onFocus={handleItemSearchFocus}
-              />
-              {showItemDropdown && itemSearchResults.length > 0 && (
-                <div className="item-search-dropdown">
-                  {itemSearchResults.map((item) => (
-                    <div key={item.itemCode} className="item-search-result" onClick={() => handleItemSelect(item)}>
-                      <div className="item-result-code">{item.itemCode}</div>
-                      <div className="item-result-desc">{item.description}</div>
-                      <div className="item-result-rack">Rack: {item.rackNumber}</div>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {showItemDropdown && itemSearchQuery && itemSearchResults.length === 0 && (
-                <div className="item-search-dropdown">
-                  <div className="item-search-no-results">No items found</div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="quantity">Quantity</label>
-            <input type="number" id="quantity" value={quantity} onChange={handleQuantityChange} />
+          {/* Multi-item table */}
+          <div className="form-group full-width">
+            <label>Add Items</label>
+            <table className="po-table">
+              <thead>
+                <tr>
+                  <th>Item Code</th>
+                  <th>Description</th>
+                  <th>Unit</th>
+                  <th>Unit Price</th>
+                  <th>Qty</th>
+                  <th>Total</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row, index) => (
+                  <tr key={index}>
+                    <td>
+                      <select
+                        value={row.itemCode}
+                        onChange={(e) =>
+                          handleRowChange(index, "itemCode", e.target.value)
+                        }
+                      >
+                        <option value="">Select item</option>
+                        {itemsList.map((it) => (
+                          <option key={it.itemCode} value={it.itemCode}>
+                            {it.itemCode}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td>{row.description}</td>
+                    <td>{row.unit}</td>
+                    <td>
+                      <input
+                        type="number"
+                        value={row.unitPrice}
+                        onChange={(e) =>
+                          handleRowChange(index, "unitPrice", e.target.value)
+                        }
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        value={row.quantity}
+                        onChange={(e) =>
+                          handleRowChange(index, "quantity", e.target.value)
+                        }
+                      />
+                    </td>
+                    <td>{row.total.toFixed(2)}</td>
+                    <td>
+                      <button
+                        className="delete-button"
+                        onClick={() => removeRow(index)}
+                      >
+                        🗑
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <button className="add-button" onClick={addRow}>
+              ➕ Add Item
+            </button>
           </div>
 
           <div className="form-group full-width">
-            <label htmlFor="remarks">Remarks</label>
-            <textarea id="remarks" value={remarks} onChange={handleRemarksChange}></textarea>
+            <label>Remarks</label>
+            <textarea
+              value={remarks}
+              onChange={(e) => setRemarks(e.target.value)}
+            ></textarea>
           </div>
 
           <div className="button-group">
-            <button className="clear-button" onClick={clearEntryInputs}>
-              Clear
+            <button className="confirm-button" onClick={handleSubmit}>
+              {editId ? "Update Purchase Order" : "Save Purchase Order"}
             </button>
-            <button className="add-button" onClick={handlePreview}>
-              Preview
-            </button>
+            {editId && (
+              <button className="clear-button" onClick={resetForm}>
+                Cancel Edit
+              </button>
+            )}
           </div>
         </div>
-
-        {/* Preview Section */}
-        {currentEntry && (
-          <div className="purchase-details-section card">
-            <div className="detail-row">
-              <div className="detail-item">
-                Purchasing No : <span>{currentEntry.poNum}</span>
-              </div>
-              <div className="detail-item">
-                Unit : <span>{currentEntry.item.unit}</span>
-              </div>
-            </div>
-            <div className="detail-row">
-              <div className="detail-item">
-                Item :{" "}
-                <span>
-                  {currentEntry.item.itemCode} - {currentEntry.item.description}
-                </span>
-              </div>
-              <div className="detail-item">
-                Total : <span>{currentEntry.total.toFixed(2)}</span>
-              </div>
-            </div>
-            <div className="detail-row">
-              <div className="detail-item">
-                Quantity : <span>{currentEntry.quantity}</span>
-              </div>
-            </div>
-            <div className="button-group">
-              <button className="delete-button" onClick={handleDeletePreview}>
-                Delete
-              </button>
-              <button className="confirm-button" onClick={handleConfirm}>
-                Confirm
-              </button>
-            </div>
-          </div>
-        )}
 
         {/* Table Section */}
         <div className="table-section card">
           <div className="search-container">
             <input
               type="text"
-              placeholder="Search by PO number, item code, description, or remarks..."
+              placeholder="Search by PO number or remarks..."
               value={searchTerm}
               onChange={handleSearchChange}
               className="search-input"
             />
             {searchTerm && (
-              <button className="search-clear-btn" onClick={handleClearSearch} title="Clear search">
+              <button className="search-clear-btn" onClick={handleClearSearch}>
                 ✕
               </button>
             )}
@@ -428,95 +344,41 @@ export default function PurchaseOrder() {
             <thead>
               <tr>
                 <th>PO Num</th>
-                <th>Item</th>
-                <th>Quantity</th>
-                <th>Unit</th>
+                <th>Supplier</th>
                 <th>Total</th>
-                <th>Ordered Date</th>
+                <th>Date</th>
                 <th>Remarks</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {Array.isArray(filteredTableData) && filteredTableData.length > 0 ? (
-                filteredTableData.map((row, index) => (
-                  <tr key={row?._id || index} className="table-row">
-                    <td>{row?.poNum || "-"}</td>
-                    <td>
-                      {editId === row?._id ? (
-                        <select
-                          value={editData.itemCode}
-                          onChange={(e) => handleEditChange("itemCode", e.target.value)}
-                        >
-                          {itemsList.map((it) => (
-                            <option key={it.itemCode} value={it.itemCode}>
-                              {`${it.itemCode} - ${it.description}`}
-                            </option>
-                          ))}
-                        </select>
-                      ) : (
-                        `${row?.item?.itemCode || ""} - ${row?.item?.description || ""}`
-                      )}
-                    </td>
-                    <td>
-                      {editId === row?._id ? (
-                        <input
-                          type="number"
-                          value={editData.quantity}
-                          onChange={(e) => handleEditChange("quantity", e.target.value)}
-                        />
-                      ) : (
-                        row?.quantity || ""
-                      )}
-                    </td>
-                    <td>{row?.item?.unit || ""}</td>
-                    <td>{row?.total ? row.total.toFixed(2) : "0.00"}</td>
-                    <td>{row?.issuedDate ? row.issuedDate.slice(0, 10) : ""}</td>
-                    <td>
-                      {editId === row?._id ? (
-                        <input
-                          type="text"
-                          value={editData.remarks}
-                          onChange={(e) => handleEditChange("remarks", e.target.value)}
-                        />
-                      ) : (
-                        row?.remarks || ""
-                      )}
-                    </td>
-                    <td>
-                      {editId === row?._id ? (
-                        <>
-                          <button className="confirm-button" onClick={() => handleSaveEdit(row._id)}>
-                            Save
-                          </button>
-                          <button className="clear-button" onClick={() => setEditId(null)}>
-                            Cancel
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <button className="add-button" onClick={() => handleEditOrder(row)}>
-                            Edit
-                          </button>
-                          <button className="delete-button" onClick={() => handleDeleteOrder(row._id)}>
-                            Delete
-                          </button>
-                        </>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="8" className="no-data">
-                    {searchTerm ? "No purchase orders match your search." : "No purchase orders added yet."}
+              {filteredTableData.map((row, index) => (
+                <tr key={row._id || index}>
+                  <td>{row.poNum}</td>
+                  <td>{row.supplier?.name || "-"}</td>
+                  <td>{row.total?.toFixed(2) || "0.00"}</td>
+                  <td>{row.issuedDate?.slice(0, 10)}</td>
+                  <td>{row.remarks}</td>
+                  <td>
+                    <button
+                      className="add-button"
+                      onClick={() => handleEditOrder(row)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="delete-button"
+                      onClick={() => handleDeleteOrder(row._id)}
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </table>
         </div>
       </div>
     </div>
-  )
+  );
 }

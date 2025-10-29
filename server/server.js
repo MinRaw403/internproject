@@ -569,129 +569,83 @@ app.get('/api/issue-notes', async (req, res) => {
     }
 });
 
-/* 🔸 CREATE purchase‑order */
-app.post('/api/purchase-orders', async (req, res) => {
-    try {
-        const {
-            poNum,
-            supplier,        // { code, name }
-            issuedDate,
-            item,            // { itemCode, description, unit, unitPrice }
-            quantity,
-            total,
-            remarks,
-        } = req.body;
-
-        const newPO = new PurchaseOrder({
-            poNum,
-            supplier,
-            issuedDate: new Date(issuedDate),
-            item,
-            quantity,
-            total,
-            remarks,
-        });
-
-        const saved = await newPO.save();
-        return res.status(201).json({ success: true, order: saved });
-    } catch (err) {
-        console.error('❌ Purchase‑order save error:', err.message, err.stack);
-        return res.status(500).json({ success: false, message: err.message });
-    }
-});
-
-/* 🔸 READ all purchase‑orders (for filling the table later) */
-app.get('/api/purchase-orders', async (_req, res) => {
-    try {
-        const orders = await PurchaseOrder.find().sort({ createdAt: -1 });
-        return res.json({ success: true, orders });
-    } catch (err) {
-        console.error('❌ Purchase‑order fetch error:', err.message, err.stack);
-        return res.status(500).json({ success: false, message: err.message });
-    }
-});
-
-// ✅ UPDATE Purchase Order
-app.put('/api/purchase-orders/:id', async (req, res) => {
+// ✅ PURCHASE ORDER ROUTES (CLEAN FINAL VERSION)
+/* 🔸 CREATE purchase-order (multi-item support) */
+app.post("/api/purchase-orders", async (req, res) => {
   try {
-    const { id } = req.params;
-    const updatedOrder = await PurchaseOrder.findByIdAndUpdate(id, req.body, { new: true });
+    const { poNum, supplier, issuedDate, items, total, remarks } = req.body;
 
-    if (!updatedOrder) {
-      return res.status(404).json({ success: false, message: 'Order not found' });
+    if (!poNum || !supplier || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ success: false, message: "Missing or invalid fields" });
     }
 
-    res.json({ success: true, message: 'Order updated successfully', data: updatedOrder });
+    const newPO = new PurchaseOrder({
+      poNum,
+      supplier,
+      issuedDate: new Date(issuedDate),
+      items, // ✅ full array of items
+      total,
+      remarks,
+    });
+
+    const saved = await newPO.save();
+    return res.status(201).json({ success: true, order: saved });
   } catch (err) {
-    console.error('❌ Error updating order:', err);
-    res.status(500).json({ success: false, message: 'Could not update the order' });
+    console.error("❌ Purchase-order save error:", err.stack);
+    return res.status(500).json({ success: false, message: err.message });
   }
 });
 
 
-// DELETE a purchase order by ID
-app.delete('/api/purchase-orders/:id', async (req, res) => {
+app.get("/api/purchase-orders", async (req, res) => {
+  try {
+    const orders = await PurchaseOrder.find().sort({ createdAt: -1 });
+    res.json({ success: true, orders });
+  } catch (err) {
+    console.error("❌ Error fetching purchase orders:", err.message);
+    res.status(500).json({ success: false, message: "Server error while fetching purchase orders" });
+  }
+});
+
+// ✅ UPDATE Purchase Order (multi-item edit)
+app.put("/api/purchase-orders/:id", async (req, res) => {
+  try {
     const { id } = req.params;
-    try {
-        const deleted = await PurchaseOrder.findByIdAndDelete(id);
-        if (!deleted) return res.status(404).json({ success: false, message: 'Not found' });
-        res.json({ success: true, message: 'Deleted successfully' });
-    } catch (err) {
-        res.status(500).json({ success: false, message: 'Server error' });
+    const { supplier, issuedDate, items, total, remarks } = req.body;
+
+    const existing = await PurchaseOrder.findById(id);
+    if (!existing) {
+      return res.status(404).json({ success: false, message: "Purchase order not found" });
     }
+
+    existing.supplier = supplier;
+    existing.issuedDate = new Date(issuedDate);
+    existing.items = items; // replaces old items array
+    existing.total = total;
+    existing.remarks = remarks;
+
+    const updated = await existing.save();
+
+    res.json({ success: true, message: "Purchase Order updated successfully", order: updated });
+  } catch (err) {
+    console.error("❌ Update error:", err.stack);
+    res.status(500).json({ success: false, message: "Server error while updating order" });
+  }
 });
 
 
-// ✅ PURCHASE ORDER ROUTES
-
-// GET all purchase orders
-app.get('/api/purchase-orders', async (req, res) => {
-    try {
-        const orders = await PurchaseOrder.find().populate('supplier').populate('item');
-        res.json({ success: true, orders });
-    } catch (err) {
-        console.error('❌ Error fetching purchase orders:', err);
-        res.status(500).json({ success: false, message: 'Server error' });
-    }
-});
-
-// POST create new purchase order
-app.post('/api/purchase-orders', async (req, res) => {
-    try {
-        const newOrder = new PurchaseOrder(req.body);
-        await newOrder.save();
-        res.status(201).json({ success: true, order: newOrder });
-    } catch (err) {
-        console.error('❌ Error saving purchase order:', err);
-        res.status(500).json({ success: false, message: 'Failed to save purchase order' });
-    }
-});
-
-// PUT update purchase order
-app.put('/api/purchase-orders/:id', async (req, res) => {
+app.delete("/api/purchase-orders/:id", async (req, res) => {
+  try {
     const { id } = req.params;
-    try {
-        const updatedOrder = await PurchaseOrder.findByIdAndUpdate(id, req.body, { new: true });
-        if (!updatedOrder) return res.status(404).json({ success: false, message: 'Order not found' });
-        res.json({ success: true, order: updatedOrder });
-    } catch (err) {
-        console.error('❌ Error updating purchase order:', err);
-        res.status(500).json({ success: false, message: 'Failed to update purchase order' });
-    }
+    const deleted = await PurchaseOrder.findByIdAndDelete(id);
+    if (!deleted) return res.status(404).json({ success: false, message: "Order not found" });
+    res.json({ success: true, message: "Purchase order deleted successfully" });
+  } catch (err) {
+    console.error("❌ Error deleting purchase order:", err.message);
+    res.status(500).json({ success: false, message: "Server error while deleting purchase order" });
+  }
 });
 
-// DELETE purchase order
-app.delete('/api/purchase-orders/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        const deletedOrder = await PurchaseOrder.findByIdAndDelete(id);
-        if (!deletedOrder) return res.status(404).json({ success: false, message: 'Order not found' });
-        res.json({ success: true, message: 'Order deleted successfully' });
-    } catch (err) {
-        console.error('❌ Error deleting purchase order:', err);
-        res.status(500).json({ success: false, message: 'Failed to delete purchase order' });
-    }
-});
 
 
 
