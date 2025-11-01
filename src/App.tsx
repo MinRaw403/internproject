@@ -1,47 +1,48 @@
-import "./App.css";
-import "./index.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "./App.css"
+import "./index.css"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
 // Pages
 
 // 🔐 Authentication
-import LoginPage from "./pages/Login page/LoginForm";
-import Account from "./pages/Maneger/CreateAccountForm";
-import Fogotpasswordpage1 from "./pages/Fogotpasswordpages/fogotpasswordpage1";
-import VerificationPage from "./pages/Fogotpasswordpages/VerificationPage";
-import Passwordresetpage from "./pages/Fogotpasswordpages/Passwordresetpage";
-import EmailVerifiedpage from "./pages/Fogotpasswordpages/EmailVerifiedpage";
-import SuccessfullyResetPassword from "./pages/Fogotpasswordpages/SuccessfullyResetPassword";
+import LoginPage from "./pages/Login page/LoginForm"
+import Account from "./pages/Maneger/CreateAccountForm"
+import Fogotpasswordpage1 from "./pages/Fogotpasswordpages/fogotpasswordpage1"
+import VerificationPage from "./pages/Fogotpasswordpages/VerificationPage"
+import Passwordresetpage from "./pages/Fogotpasswordpages/Passwordresetpage"
+import EmailVerifiedpage from "./pages/Fogotpasswordpages/EmailVerifiedpage"
+import SuccessfullyResetPassword from "./pages/Fogotpasswordpages/SuccessfullyResetPassword"
 
 // 🔧 Main Application
-import MainPage from "./pages/Mainpage/MainPage";
+import MainPage from "./pages/Mainpage/MainPage"
 
 // 🛒 Items
-import ItemPage from "./pages/Items Add pages/ItemPage";
-import EditItemForm from "./pages/Items Add pages/EditItemForm";
-import ItemDetailsPage from "./pages/Items Add pages/ItemDetailsPage";
+import ItemPage from "./pages/Items Add pages/ItemPage"
+import EditItemForm from "./pages/Items Add pages/EditItemForm"
+import ItemDetailsPage from "./pages/Items Add pages/ItemDetailsPage"
 
 // 🗃️ Category Management
-import CategoryPage from "./pages/Categories Add pages/category";
-import AddCategoryForm from "./pages/Categories Add pages/add";
+import CategoryPage from "./pages/Categories Add pages/category"
+import AddCategoryForm from "./pages/Categories Add pages/add"
+import EditCategoryForm from "./pages/Categories Add pages/EditCategoryForm"
 
 // 👥 Supplier Management
-import SuppliersPage from "./pages/SupplierAddpages/SuppliersPage";
+import SuppliersPage from "./pages/SupplierAddpages/SuppliersPage"
 
 // 🧾 Issue Note
-import IssueNoteWrapper from "./pages/IssueNotePage/IssueNoteWrapper";
+import IssueNoteWrapper from "./pages/IssueNotePage/IssueNoteWrapper"
 
 // 💵 Purchase Order
-import PurchaseOrder from "./pages/Purchase Order page/Purchaseorder";
+import PurchaseOrder from "./pages/Purchase Order page/Purchaseorder"
 
 // 📦 GRN
-import GRNPage from "./pages/GRN/GRNPage";
+import GRNPage from "./pages/GRN/GRNPage"
 
 // 🏢 Department
-import Department from "./pages/Department/DepartmentManagement";
+import Department from "./pages/Department/DepartmentManagement"
 
 // 📊 Reports
-import Report from "./pages/Report page/components/StockDashboard";
+import Report from "./pages/Report page/components/StockDashboard"
 
 function App() {
   return (
@@ -67,6 +68,7 @@ function App() {
         {/* 🗃️ Category Management */}
         <Route path="/categories" element={<CategoryPage />} />
         <Route path="/categories/add" element={<AddCategoryForm />} />
+        <Route path="/categories/edit" element={<EditCategoryForm />} />
 
         {/* 👥 Supplier Management */}
         <Route path="/suppliers" element={<SuppliersPage />} />
@@ -78,7 +80,7 @@ function App() {
         <Route path="/purchase-order" element={<PurchaseOrder />} />
 
         {/* 📦 GRN Pages */}
-         {/* GRN Page */}
+        {/* GRN Page */}
         <Route path="/grn" element={<GRNPage />} />
 
         {/* fallback or default route */}
@@ -90,7 +92,7 @@ function App() {
         <Route path="/report" element={<Report />} />
       </Routes>
     </Router>
-  );
+  )
 }
 
-export default App;
+export default App

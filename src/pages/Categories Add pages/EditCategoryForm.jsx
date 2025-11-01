@@ -1,20 +1,33 @@
 "use client"
 
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { useState, useEffect } from "react"
+import { Link, useNavigate, useLocation } from "react-router-dom"
 import "./AddCategoryForm.css"
 import axios from "axios"
 
-export default function AddCategoryForm() {
+export default function EditCategoryForm() {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const categoryToEdit = location.state?.category
+
   const [code, setCode] = useState("")
   const [description, setDescription] = useState("")
-  const [error, setError] = useState(null) // Add error state if needed
-  const navigate = useNavigate()
+  const [error, setError] = useState(null)
 
-  const handleSave = async (e) => {
+  useEffect(() => {
+    if (!categoryToEdit) {
+      alert("No category selected for editing")
+      navigate("/categories")
+      return
+    }
+    setCode(categoryToEdit.code)
+    setDescription(categoryToEdit.description)
+  }, [categoryToEdit, navigate])
+
+  const handleUpdate = async (e) => {
     e.preventDefault()
 
-    if (!code.trim() || !description.trim()) {
+    if (!description.trim()) {
       setError("Please fill all required fields")
       return
     }
@@ -22,34 +35,34 @@ export default function AddCategoryForm() {
     setError(null)
 
     try {
-      const res = await axios.post("http://localhost:5000/api/categories", {
-        code,
+      const res = await axios.put(`http://localhost:5000/api/categories/${categoryToEdit.code}`, {
         description,
       })
 
       if (res.data.success) {
         navigate("/categories", {
-          replace: true, // prevents going back to Add form
+          replace: true,
           state: {
-            categoryAdded: true,
-            categoryAddedData: res.data.category,
+            categoryUpdated: true,
+            categoryUpdatedData: res.data.category,
           },
         })
       } else {
-        setError("Failed to add category")
+        setError("Failed to update category")
       }
     } catch (err) {
-      console.error("Error adding category:", err)
-      setError("Server error while saving category")
+      console.error("Error updating category:", err)
+      console.error("Error response:", err.response?.data)
+      setError(err.response?.data?.message || "Server error while updating category")
     }
   }
 
   return (
     <div className="add-category-page">
       <div className="add-category-container">
-        <h2 className="add-category-title">Add Category</h2>
+        <h2 className="add-category-title">Edit Category</h2>
         {error && <div className="error-message">{error}</div>}
-        <form className="add-category-form" onSubmit={handleSave}>
+        <form className="add-category-form" onSubmit={handleUpdate}>
           <div className="input-group">
             <label htmlFor="categoryCode" className="input-label">
               Code
@@ -62,7 +75,10 @@ export default function AddCategoryForm() {
               value={code}
               onChange={(e) => setCode(e.target.value)}
               required
+              disabled
+              style={{ backgroundColor: "#f0f0f0", cursor: "not-allowed" }}
             />
+            <small style={{ color: "#666", fontSize: "0.85em" }}>Category code cannot be changed</small>
           </div>
           <div className="input-group">
             <label htmlFor="categoryDescription" className="input-label">
@@ -80,11 +96,11 @@ export default function AddCategoryForm() {
           </div>
           <div className="button-group">
             <button type="submit" className="primary-btn">
-              Save
+              Update
             </button>
             <Link to="/categories">
               <button type="button" className="primary-btn">
-                Back
+                Cancel
               </button>
             </Link>
           </div>
