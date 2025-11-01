@@ -22,7 +22,7 @@ const MOCK_ITEMS = [
   { code: "ITM008", name: "Monitor 24 inch", unit: "pcs", price: 180.0 },
 ]
 
-const GRN = () => {
+const GRN = ({ editingGRN, onBackToList }) => {
   const [formData, setFormData] = useState({
     grnNo: "Loading...",
     date: new Date().toISOString().split("T")[0],
@@ -53,6 +53,50 @@ const GRN = () => {
 
   const supplierRef = useRef(null)
   const itemRef = useRef(null)
+
+  useEffect(() => {
+    if (editingGRN) {
+      setFormData({
+        grnNo: editingGRN.grnNo,
+        date: editingGRN.date,
+        supplier: editingGRN.supplier,
+        receivedBy: editingGRN.receivedBy,
+        invoiceNo: editingGRN.invoiceNo || "",
+        shipmentNo: editingGRN.shipmentNo || "",
+        containerNo: editingGRN.containerNo || "",
+        purchaseType: editingGRN.purchaseType || "local",
+        remarks: editingGRN.remarks || "",
+        items: editingGRN.items || [{ code: "", item: "", qty: "", unit: "", unitPrice: "", amount: 0 }],
+        total: editingGRN.total || 0,
+        discount: editingGRN.discount || 0,
+        balance: editingGRN.balance || 0,
+        vat: editingGRN.vat || 0,
+        nbt: editingGRN.nbt || 0,
+        netTotal: editingGRN.netTotal || 0,
+      })
+      setSupplierSearch(editingGRN.supplier)
+    } else {
+      setFormData({
+        grnNo: "",
+        date: new Date().toISOString().split("T")[0],
+        supplier: "",
+        receivedBy: "",
+        invoiceNo: "",
+        shipmentNo: "",
+        containerNo: "",
+        purchaseType: "local",
+        remarks: "",
+        items: [{ code: "", item: "", qty: "", unit: "", unitPrice: "", amount: 0 }],
+        total: 0,
+        discount: 0,
+        balance: 0,
+        vat: 0,
+        nbt: 0,
+        netTotal: 0,
+      })
+      setSupplierSearch("")
+    }
+  }, [editingGRN])
 
   useEffect(() => {
     const fetchSuppliers = async () => {
@@ -100,10 +144,6 @@ const GRN = () => {
     }
 
     fetchItems()
-  }, [])
-
-  useEffect(() => {
-    setFormData((prev) => ({ ...prev, grnNo: "" }))
   }, [])
 
   const filteredSuppliers = suppliers.filter(
@@ -211,8 +251,11 @@ const GRN = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/grns", {
-        method: "POST",
+      const isUpdate = editingGRN && editingGRN.grnNo
+      const url = isUpdate ? `http://localhost:5000/api/grns/${editingGRN.grnNo}` : "http://localhost:5000/api/grns"
+
+      const response = await fetch(url, {
+        method: isUpdate ? "PUT" : "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -222,22 +265,22 @@ const GRN = () => {
       const data = await response.json()
 
       if (data.success) {
-        alert("✅ GRN saved successfully! GRN No: " + data.grn.grnNo)
+        alert(`✅ GRN ${isUpdate ? "updated" : "saved"} successfully! GRN No: ${data.grn.grnNo}`)
         console.log("[v0] Saved GRN:", data.grn)
         setFormData((prev) => ({ ...prev, grnNo: data.grn.grnNo }))
         setTimeout(() => {
           handlePrint()
         }, 500)
       } else {
-        alert("❌ Failed to save GRN: " + data.message)
+        alert(`❌ Failed to ${isUpdate ? "update" : "save"} GRN: ${data.message}`)
       }
     } catch (error) {
       console.log("[v0] Backend not available for saving")
-      const mockGrnNo = `GRN-${new Date().toISOString().split("T")[0].replace(/-/g, "")}-${Math.floor(
-        Math.random() * 1000,
-      )
-        .toString()
-        .padStart(3, "0")}`
+      const mockGrnNo =
+        editingGRN?.grnNo ||
+        `GRN-${new Date().toISOString().split("T")[0].replace(/-/g, "")}-${Math.floor(Math.random() * 1000)
+          .toString()
+          .padStart(3, "0")}`
       setFormData((prev) => ({ ...prev, grnNo: mockGrnNo }))
       alert(
         `✅ GRN saved locally! GRN No: ${mockGrnNo}\n\n(Note: Connect to backend at http://localhost:5000 to save to database)`,
@@ -268,6 +311,9 @@ const GRN = () => {
       netTotal: 0,
     })
     setSupplierSearch("")
+    if (onBackToList) {
+      onBackToList()
+    }
   }
 
   const handlePrint = () => {
@@ -590,7 +636,7 @@ const GRN = () => {
       {/* Action Buttons */}
       <div className="action-buttons">
         <button onClick={handleSave} className="save-btn">
-          Save GRN
+          {editingGRN ? "Update GRN" : "Save GRN"}
         </button>
         <button onClick={handleNew} className="new-btn">
           New GRN

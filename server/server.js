@@ -884,6 +884,5 @@ app.get("/api/report-items", async (req, res) => {
 app.listen(5000, () => {
     console.log('🚀 Server running at http://localhost:5000');
 });
-
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
