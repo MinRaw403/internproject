@@ -597,26 +597,3 @@ textarea:focus-visible {
         border: 2px solid white;
     }
 }
-
-.supplier-dropdown {
-  position: absolute;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  max-height: 200px;
-  overflow-y: auto;
-  width: 20%;
-  z-index: 1000;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.supplier-option {
-  padding: 8px 12px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s;
-}
-
-.supplier-option:hover {
-  background-color: #f0f0f0;
-}

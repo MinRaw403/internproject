@@ -194,11 +194,7 @@ export default function PurchaseOrder() {
   return (
     <div className="purchase-order-container">
       <div className="main-content">
-        <header className="header">
-          <span className="app-title">SMARTSTOCK(PVT) LTD</span>
-        </header>
-
-        <p className="page-title">Purchase Order</p>
+              <p className="page-title">Purchase Order</p>
 
         {/* Input Section */}
         <div className="input-section card">

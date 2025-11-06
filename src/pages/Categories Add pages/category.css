@@ -57,6 +57,7 @@
   width: 100%;
   flex-wrap: nowrap;
   box-sizing: border-box;
+  margin-top: 100px;
 }
 
 .left-section {

@@ -716,6 +716,29 @@ app.delete("/api/grns/:id", async (req, res) => {
   }
 })
 
+// Update GRN
+app.put("/api/grns/:id", async (req, res) => {
+  try {
+    const { id } = req.params
+
+    if (!req.body.supplier) {
+      return res.status(400).json({ success: false, message: "Supplier is required" })
+    }
+
+    const updatedGrn = await Grn.findByIdAndUpdate(id, req.body, { new: true, runValidators: true })
+
+    if (!updatedGrn) {
+      return res.status(404).json({ success: false, message: "GRN not found" })
+    }
+
+    res.json({ success: true, grn: updatedGrn, message: "GRN updated successfully" })
+  } catch (err) {
+    console.error("❌ Error updating GRN:", err.stack)
+    res.status(500).json({ success: false, message: "Server error while updating GRN" })
+  }
+})
+
+
 // ✅ Get all departments
 app.get("/api/departments", async (req, res) => {
   try {

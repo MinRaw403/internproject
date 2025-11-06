@@ -1,5 +1,5 @@
 .grn-container {
-  max-width: 1400px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 2rem;
   background: white;
@@ -91,7 +91,7 @@
 
 .grn-form {
   display: grid;
-  grid-template-columns: 1fr 1.5fr;
+  grid-template-columns: 1fr 15.5fr;
   gap: 2rem;
   margin-bottom: 2rem;
 }

@@ -98,15 +98,7 @@ const DepartmentManagement = () => {
 
   return (
       <div className="app-container">
-        {/* ✅ Header */}
-        <header className="top-header">
-          <button className="menu-button" aria-label="Menu">
-            <div className="hamburger-line"></div>
-            <div className="hamburger-line"></div>
-            <div className="hamburger-line"></div>
-          </button>
-          <h1 className="company-name">SMARTSTOCK(PVT) LTD</h1>
-        </header>
+           
 
         {/* Main Content */}
         <div className="main-content">

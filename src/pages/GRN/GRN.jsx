@@ -251,8 +251,8 @@ const GRN = ({ editingGRN, onBackToList }) => {
     }
 
     try {
-      const isUpdate = editingGRN && editingGRN.grnNo
-      const url = isUpdate ? `http://localhost:5000/api/grns/${editingGRN.grnNo}` : "http://localhost:5000/api/grns"
+      const isUpdate = editingGRN && editingGRN._id
+      const url = isUpdate ? `http://localhost:5000/api/grns/${editingGRN._id}` : "http://localhost:5000/api/grns"
 
       const response = await fetch(url, {
         method: isUpdate ? "PUT" : "POST",
@@ -275,19 +275,10 @@ const GRN = ({ editingGRN, onBackToList }) => {
         alert(`❌ Failed to ${isUpdate ? "update" : "save"} GRN: ${data.message}`)
       }
     } catch (error) {
-      console.log("[v0] Backend not available for saving")
-      const mockGrnNo =
-        editingGRN?.grnNo ||
-        `GRN-${new Date().toISOString().split("T")[0].replace(/-/g, "")}-${Math.floor(Math.random() * 1000)
-          .toString()
-          .padStart(3, "0")}`
-      setFormData((prev) => ({ ...prev, grnNo: mockGrnNo }))
+      console.error("[v0] Network error:", error)
       alert(
-        `✅ GRN saved locally! GRN No: ${mockGrnNo}\n\n(Note: Connect to backend at http://localhost:5000 to save to database)`,
+        `❌ Cannot connect to backend at http://localhost:5000\n\nPlease ensure:\n1. Backend server is running\n2. MongoDB is connected\n3. No firewall blocking the connection`,
       )
-      setTimeout(() => {
-        handlePrint()
-      }, 500)
     }
   }
 

@@ -115,15 +115,7 @@ export default function CreateAccountForm() {
 
   return (
     <div className="create-account-container">
-      <button type="button" className="main-menu-btn" onClick={() => navigate("/main")}>
-        <svg className="home-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-          <polyline points="9 22 9 12 15 12 15 22" />
-        </svg>
-        Main Menu
-      </button>
-
-      <div className="form-header">
+          <div className="form-header">
         <div className="icon-container">
           <svg className="user-plus-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />

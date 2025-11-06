@@ -72,19 +72,7 @@ function MainPage() {
 
     return (
         <div className="main-container">
-            <header className="header">
-                <div className="header-left">
-                    <div className="hamburger-menu">
-                        <div className="bar"></div>
-                        <div className="bar"></div>
-                        <div className="bar"></div>
-                    </div>
-                    <span className="app-title">SMARTSTOCK(PVT) LTD</span>
-                </div>
-            </header>
-
-            <h2 className="dashboard-title">Stock Management System Dashboard</h2>
-
+        
             <div className="card-row">{row1.map(renderCard)}</div>
             <div className="card-row">{row2.map(renderCard)}</div>
             <div className="card-row">{row3.map(renderCard)}</div>

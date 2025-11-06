@@ -86,18 +86,7 @@ export default function CategoryPage() {
   return (
     <div className="page-wrapper">
       <div className="category-content">
-        <header className="header">
-          <div className="header-left">
-            <div className="hamburger-menu">
-              <div className="bar"></div>
-              <div className="bar"></div>
-              <div className="bar"></div>
-            </div>
-            <span className="app-title">SMARTSTOCK(PVT) LTD</span>
-          </div>
-        </header>
-
-        <div className="page-container">
+          <div className="page-container">
           {/* LEFT SECTION */}
           <div className="left-section">
             <img src="https://cdn-icons-png.flaticon.com/512/891/891419.png" alt="Category" className="category-img" />

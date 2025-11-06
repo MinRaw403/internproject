@@ -1030,3 +1030,188 @@ body {
     min-width: 600px;
   }
 }
+/* Selected Items Styles */
+.selected-items-container {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  background-color: #f8fafc;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.no-items-message {
+  text-align: center;
+  color: #64748b;
+  font-style: italic;
+  padding: 20px;
+}
+
+.selected-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.selected-item:last-child {
+  margin-bottom: 0;
+}
+
+.item-info {
+  flex: 1;
+}
+
+.item-code {
+  font-weight: bold;
+  color: #1e293b;
+  font-size: 14px;
+}
+
+.item-description {
+  color: #475569;
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.item-rack {
+  color: #64748b;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.item-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f1f5f9;
+  border-radius: 6px;
+  padding: 4px;
+}
+
+.quantity-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: #e2e8f0;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #475569;
+}
+
+.quantity-btn:hover:not(:disabled) {
+  background: #cbd5e1;
+}
+
+.quantity-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.quantity-display {
+  min-width: 30px;
+  text-align: center;
+  font-weight: bold;
+  color: #1e293b;
+}
+
+.remove-item-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: #fee2e2;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #dc2626;
+}
+
+.remove-item-btn:hover {
+  background: #fecaca;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .selected-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .item-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+/* === Improved Item Dropdown === */
+.item-dropdown {
+  position: absolute;
+  top: 105%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 1000;
+  animation: dropdownFade 0.2s ease-in-out;
+}
+
+.item-option {
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.item-option:hover {
+  background: #f3f6ff;
+  transform: scale(1.01);
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.item-header strong {
+  color: #222;
+  font-size: 14px;
+}
+
+.item-header .rack {
+  background: #eef3ff;
+  color: #1e40af;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.desc {
+  font-size: 13px;
+  color: #555;
+  margin-top: 4px;
+}
+
+@keyframes dropdownFade {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}

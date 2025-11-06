@@ -203,7 +203,7 @@ body {
     color: #333;
     margin: 0;
     font-weight: 700;
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    background: linear-gradient(45deg, #667eea, #667eea);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -278,7 +278,7 @@ body {
 }
 
 .supplier-add {
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    background: linear-gradient(45deg, #667eea, #667eea);
     color: white;
     padding: 12px 25px;
     border: none;
@@ -341,7 +341,7 @@ body {
 }
 
 .supplier-table th {
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    background: linear-gradient(45deg, #667eea, #667eea);
     color: white;
     font-weight: 600;
     text-transform: uppercase;

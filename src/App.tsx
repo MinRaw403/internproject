@@ -1,6 +1,7 @@
 import "./App.css"
 import "./index.css"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import ConditionalLayout from "./components/conditional-layout"
 
 // Pages
 
@@ -39,7 +40,7 @@ import PurchaseOrder from "./pages/Purchase Order page/Purchaseorder"
 import GRNPage from "./pages/GRN/GRNPage"
 
 // 🏢 Department
-import Department from "./pages/Department/DepartmentManagement"
+import DepartmentManagement from "./pages/Department/DepartmentManagement"
 
 // 📊 Reports
 import Report from "./pages/Report page/components/StockDashboard"
@@ -48,48 +49,148 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* 🔐 Authentication */}
+        {/* 🔐 Authentication - No Sidebar */}
         <Route path="/" element={<LoginPage />} />
-        <Route path="/create-account" element={<Account />} />
         <Route path="/forgot-password" element={<Fogotpasswordpage1 />} />
         <Route path="/verify" element={<VerificationPage />} />
         <Route path="/reset-password" element={<Passwordresetpage />} />
         <Route path="/email-verified" element={<EmailVerifiedpage />} />
         <Route path="/success-reset" element={<SuccessfullyResetPassword />} />
 
-        {/* 🔧 Main Application */}
-        <Route path="/main" element={<MainPage />} />
+        {/* 🔧 Main Application - With Conditional Sidebar */}
+        <Route
+          path="/main"
+          element={
+            <ConditionalLayout>
+              <MainPage />
+            </ConditionalLayout>
+          }
+        />
 
-        {/* 🛒 Item Pages */}
-        <Route path="/item/:itemCode" element={<ItemPage />} />
-        <Route path="/edit-item" element={<EditItemForm />} />
-        <Route path="/details" element={<ItemDetailsPage />} />
+        {/* 🛒 Item Pages - With Conditional Sidebar */}
+        <Route
+          path="/item/:itemCode"
+          element={
+            <ConditionalLayout>
+              <ItemPage />
+            </ConditionalLayout>
+          }
+        />
+        <Route
+          path="/edit-item"
+          element={
+            <ConditionalLayout>
+              <EditItemForm />
+            </ConditionalLayout>
+          }
+        />
+        <Route
+          path="/details"
+          element={
+            <ConditionalLayout>
+              <ItemDetailsPage />
+            </ConditionalLayout>
+          }
+        />
 
-        {/* 🗃️ Category Management */}
-        <Route path="/categories" element={<CategoryPage />} />
-        <Route path="/categories/add" element={<AddCategoryForm />} />
-        <Route path="/categories/edit" element={<EditCategoryForm />} />
+        {/* 🗃️ Category Management - With Conditional Sidebar */}
+        <Route
+          path="/categories"
+          element={
+            <ConditionalLayout>
+              <CategoryPage />
+            </ConditionalLayout>
+          }
+        />
+        <Route
+          path="/categories/add"
+          element={
+            <ConditionalLayout>
+              <AddCategoryForm />
+            </ConditionalLayout>
+          }
+        />
+        <Route
+          path="/categories/edit"
+          element={
+            <ConditionalLayout>
+              <EditCategoryForm />
+            </ConditionalLayout>
+          }
+        />
 
-        {/* 👥 Supplier Management */}
-        <Route path="/suppliers" element={<SuppliersPage />} />
+        {/* 👥 Supplier Management - With Conditional Sidebar */}
+        <Route
+          path="/suppliers"
+          element={
+            <ConditionalLayout>
+              <SuppliersPage />
+            </ConditionalLayout>
+          }
+        />
 
-        {/* 🧾 Issue Note */}
-        <Route path="/issue-note" element={<IssueNoteWrapper />} />
+        {/* 🧾 Issue Note - With Conditional Sidebar */}
+        <Route
+          path="/issue-note"
+          element={
+            <ConditionalLayout>
+              <IssueNoteWrapper />
+            </ConditionalLayout>
+          }
+        />
 
-        {/* 💵 Purchase Order */}
-        <Route path="/purchase-order" element={<PurchaseOrder />} />
+        {/* 💵 Purchase Order - With Conditional Sidebar */}
+        <Route
+          path="/purchase-order"
+          element={
+            <ConditionalLayout>
+              <PurchaseOrder />
+            </ConditionalLayout>
+          }
+        />
 
-        {/* 📦 GRN Pages */}
-        {/* GRN Page */}
-        <Route path="/grn" element={<GRNPage />} />
+        {/* 📦 GRN Pages - With Conditional Sidebar */}
+        <Route
+          path="/grn"
+          element={
+            <ConditionalLayout>
+              <GRNPage />
+            </ConditionalLayout>
+          }
+        />
+
+        {/* 🏢 Department - With Conditional Sidebar */}
+        <Route
+          path="/department"
+          element={
+            <ConditionalLayout>
+              <DepartmentManagement />
+            </ConditionalLayout>
+          }
+        />
+
+        {/* 📊 Reports - With Conditional Sidebar */}
+        <Route
+          path="/report"
+          element={
+            <ConditionalLayout>
+              <Report />
+            </ConditionalLayout>
+          }
+        />
+
+        {/* 👤 Create Account - Manager Only (With Conditional Sidebar) */}
+        <Route
+          path="/create-account"
+          element={
+            <ConditionalLayout>
+              <Account />
+            </ConditionalLayout>
+          }
+        />
 
         {/* fallback or default route */}
         <Route path="*" element={<div>Page not found</div>} />
-        {/* 🏢 Department */}
-        <Route path="/department" element={<Department />} />
-
-        {/* 📊 Reports */}
-        <Route path="/report" element={<Report />} />
       </Routes>
     </Router>
   )

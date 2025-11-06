@@ -284,18 +284,7 @@ function SuppliersPage() {
 
     return (
         <div className="main-container">
-            <header className="header">
-                <div className="header-left">
-                    <div className="hamburger-menu">
-                        <div className="bar"></div>
-                        <div className="bar"></div>
-                        <div className="bar"></div>
-                    </div>
-                    <span className="app-title">SMARTSTOCK(PVT) LTD</span>
-                </div>
-            </header>
-
-            {/* Error message display */}
+                      {/* Error message display */}
             {errorMessage && <div className="error-banner">{errorMessage}</div>}
 
             <SupplierList

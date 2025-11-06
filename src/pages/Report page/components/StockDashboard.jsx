@@ -238,20 +238,7 @@ const StockDashboard = () => {
 
   return (
       <div className="dashboard-container">
-        <header className="dashboard-header">
-          <div className="header-content">
-            <div className="header-left">
-              <span className="menu-icon">☰</span>
-              <h1 className="header-title">Stock Management System</h1>
-            </div>
-            <div className="header-right">
-              <span className="header-subtitle">Dashboard Reports</span>
-              <div className="user-avatar">A</div>
-            </div>
-          </div>
-        </header>
-
-        <div className="dashboard-content">
+              <div className="dashboard-content">
           {/* Filters */}
           <div className="card card-filter">
             <div className="card-header">
