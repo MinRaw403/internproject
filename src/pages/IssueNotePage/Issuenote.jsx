@@ -349,20 +349,30 @@ function Issuenote() {
                     placeholder="Search by item code, description, or rack number..."
                   />
                   {showItemDropdown && itemSearchResults.length > 0 && (
-                    <div className="item-dropdown">
-                      {itemSearchResults.map((searchItem) => (
-                        <div
-                          key={searchItem.itemCode}
-                          onClick={() => handleItemSelect(searchItem)}
-                          className="dropdown-item"
-                        >
-                          <strong>{searchItem.itemCode}</strong>
-                          <div>{searchItem.description}</div>
-                          <small>Rack: {searchItem.rackNumber}</small>
-                        </div>
-                      ))}
-                    </div>
+                      <div className="item-dropdown">
+                        {itemSearchResults.map((searchItem) => (
+                            <div
+                                key={searchItem.itemCode}
+                                onClick={() => handleItemSelect(searchItem)}
+                                className="dropdown-item with-image"
+                            >
+                              {searchItem.imagePath && (
+                                  <img
+                                      src={`http://localhost:5000${searchItem.imagePath}`}
+                                      alt={searchItem.itemCode}
+                                      className="dropdown-item-image"
+                                  />
+                              )}
+                              <div className="dropdown-item-info">
+                                <strong>{searchItem.itemCode}</strong>
+                                <div>{searchItem.description}</div>
+                                <small>Rack: {searchItem.rackNumber}</small>
+                              </div>
+                            </div>
+                        ))}
+                      </div>
                   )}
+
                 </div>
 
                 <div className="form-field">

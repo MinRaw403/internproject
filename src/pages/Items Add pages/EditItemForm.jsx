@@ -13,6 +13,7 @@ const EditItemForm = () => {
         itemCode: '',
         description: '',
         unitPrice: '',
+        
         reOrder: '',
         unit: '',
         supplier: '',

@@ -336,18 +336,30 @@ function Issuenote() {
                                   key={searchItem.itemCode}
                                   onClick={() => handleItemSelect(searchItem)}
                                   style={{
-                                    padding: "10px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    padding: "8px",
                                     cursor: "pointer",
                                     borderBottom: "1px solid #f0f0f0",
                                   }}
                                   onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f5f5f5")}
                                   onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "white")}
                               >
-                                <div style={{ fontWeight: "bold" }}>{searchItem.itemCode}</div>
-                                <div style={{ fontSize: "0.9em", color: "#666" }}>{searchItem.description}</div>
-                                <div style={{ fontSize: "0.85em", color: "#999" }}>Rack: {searchItem.rackNumber}</div>
+                                {searchItem.imagePath && (
+                                    <img
+                                        src={`http://localhost:5000${searchItem.imagePath}`}
+                                        alt={searchItem.itemCode}
+                                        className="dropdown-item-image"
+                                    />
+                                )}
+                                <div style={{ display: "flex", flexDirection: "column" }}>
+                                  <div style={{ fontWeight: "bold" }}>{searchItem.itemCode}</div>
+                                  <div style={{ fontSize: "0.9em", color: "#666" }}>{searchItem.description}</div>
+                                  <div style={{ fontSize: "0.85em", color: "#999" }}>Rack: {searchItem.rackNumber}</div>
+                                </div>
                               </div>
                           ))}
+
                         </div>
                     )}
                   </div>

@@ -1215,3 +1215,10 @@ body {
   from { opacity: 0; transform: translateY(-5px); }
   to { opacity: 1; transform: translateY(0); }
 }
+.dropdown-item-image {
+  width: 80px;        /* smaller width */
+  height: 80px;       /* smaller height */
+  object-fit: cover;  /* maintain aspect ratio and crop if needed */
+  margin-right: 8px;  /* spacing between image and text */
+  border-radius: 3px; /* slightly rounded corners */
+}
